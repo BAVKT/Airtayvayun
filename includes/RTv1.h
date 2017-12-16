@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/16 19:42:14 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/16 21:09:57 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,7 @@ void						ray(t_b *b);
 */
 
 t_v							draw_pixelvp(t_b *b, t_px px);
+t_v							ray2vect(t_ray ray);
 
 /*
 ** Catch the events						| event.c
@@ -164,8 +165,8 @@ t_v							vect_multnb(t_v *v, double nb);
 */
 
 void						vect_normalize(t_v *v);
-double						vect_norme(t_v *v);
-double						vect_norme2(t_v *v);
+double						vect_norme(t_v v);
+double						vect_norme2(t_v v);
 void						vect_print(t_v v);
 t_v							vect_rotate_xy(t_v v, double angle);
 t_v							vect_init(double x, double y, double z);

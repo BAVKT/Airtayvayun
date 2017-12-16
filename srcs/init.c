@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/16 19:49:41 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/16 21:23:29 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	init_vp(t_b *b)
 	b->vp.h = 0.35;
 	b->vp.xi = b->vp.w / (double)b->winx;
 	b->vp.yi = b->vp.h / (double)b->winy;
-	b->vp.dist = 1;
+	b->vp.dist = 0;
 		// printf("dist = %f\n", b->vp.dist);
 	b->vp.upleft = vect_sub(vect_add(b->cam.dir, vect_add(vect_multnb(&b->cam.dir, b->vp.dist),
 	vect_multnb(&b->cam.dirup, b->vp.h / 2))), vect_multnb(&b->cam.dirright, b->vp.w / 2));

@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/16 20:07:39 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/16 21:46:17 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,11 @@ void	draw(t_b *b)
 			vect_normalize(&ray.dir);
 			px.color = 0xff * (b->winx * px.y + px.x) / (b->winx * b->winy);
 			// *((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = px.color | px.color << 8 | px.color << 16;
-				
 			if (calc_sphere(ray, b->sph))
 			{
 				SDL_LockSurface(b->img);
 				// printf("x = %d, y = %d\n", px.x, px.y);
-				*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = calc_sphere(ray, b->sph) * 255;
+				*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = calc_sphere(ray, b->sph);
 				SDL_UnlockSurface(b->img);
 			}
 			else
@@ -43,7 +42,6 @@ void	draw(t_b *b)
 		}
 	}
 	SDL_UpdateWindowSurface(b->win);
-	ft_putendl("END");
 }
 
 int main()
@@ -51,8 +49,9 @@ int main()
 	t_b			b;
 
 	init_b(&b);
-	b.sph.r = 0.1;
+	b.sph.r = 0.5;
 	b.sph.center = vect_init(0, 0, 10);
+	b.sph.color = 0xffffff;
 	while (event(&b))
 		draw(&b);
 	SDL_DestroyWindow(b.win);

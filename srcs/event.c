@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/16 20:08:53 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/16 21:32:57 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int		event(t_b *b)
 	while (SDL_PollEvent(&event))
 	{
 		ev = event.key.keysym.sym;
-		// ft_putnbrendl(ev);
+		ft_putstr("k = ");
+			ft_putnbrendl(ev);
 		if (event.type == SDL_QUIT)
 			return (0);
 		else if (ev == SDLK_DOWN | ev == SDLK_UP | ev == SDLK_LEFT | ev == SDLK_RIGHT)
@@ -67,9 +68,9 @@ t_v		ev_move(t_v v, int ev)
 
 	tmp = v;
 	if (ev == SDLK_w)
-		tmp.x = v.y + 0.1;
+		tmp.z = v.z + 0.1;
 	else if (ev == SDLK_s)
-		tmp.x = v.y - 0.1;
+		tmp.z = v.z - 0.1;
 	else if (ev == SDLK_a)
 		tmp.x = v.x - 0.1;
 	else if (ev == SDLK_d)

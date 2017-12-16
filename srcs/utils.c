@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 20:08:33 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/16 19:20:27 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/16 21:08:25 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,13 @@ t_v		draw_pixelvp(t_b *b, t_px px)
 		// vect_print(tmp3);
 	//On dessine dans l'image
 	return (tmp3);
+}
+
+/*
+** Sort un vect a partir d'un ray
+*/
+
+t_v		ray2vect(t_ray ray)
+{
+	return (vect_add(ray.ori, vect_multnb(&ray.dir, ray.t)));
 }

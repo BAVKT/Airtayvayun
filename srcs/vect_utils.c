@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 19:00:15 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/16 18:35:01 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/16 21:10:28 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,20 @@
 ** Sort le carré de la norme du vecteur
 */
 
-double		vect_norme2(t_v *v)
+double		vect_norme2(t_v v)
 {
 			// ft_putendlcolor("vect_norme2();", MAGENTA);
-	return((v->x * v->x) + (v->y * v->y) + (v->z * v->z));
+	return((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
 }
 
 /*
 ** Sort la norme du vecteur
 */
 
-double		vect_norme(t_v *v)
+double		vect_norme(t_v v)
 {
 			// ft_putendlcolor("vect_norme();", MAGENTA);
-	return(sqrt((v->x * v->x) + (v->y * v->y) + (v->z * v->z)));
+	return(sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z)));
 }
 
 /*
@@ -41,7 +41,7 @@ void		vect_normalize(t_v *v)
 			// ft_putendlcolor("vect_normalize();", MAGENTA);
 	double n;
 
-	n = vect_norme(v);
+	n = vect_norme(*v);
 	v->x /= n;
 	v->y /= n;
 	v->z /= n;
