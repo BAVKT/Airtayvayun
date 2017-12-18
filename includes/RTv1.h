@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/16 21:09:57 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/18 20:06:11 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,18 @@ typedef	struct				s_vp
 }							t_vp;
 
 /*
+** Light struct
+*/
+
+typedef	struct				s_lux
+{
+	t_v						ori;
+	double					power;
+	double 					flux;
+	unsigned int			color;
+}							t_lux;
+
+/*
 ** The base struct, containing all we need to create life
 */
 
@@ -112,6 +124,7 @@ void						init_b(t_b *b);
 void						init_vp(t_b *b);
 void						init_cam(t_cam *cam);
 void						init_vect(t_v *vect, double x, double y, double z);
+void						init_lux(t_lux *lux, t_v pos);
 
 /*
 **	Errors								| error.c

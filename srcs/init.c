@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/16 21:23:29 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/18 20:06:07 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,15 @@ void	init_vect(t_v *vect, double x, double y, double z)
 	vect->x = x;
 	vect->y = y;
 	vect->z = z;
+}
+
+/*
+** Init the lux struct
+*/
+
+void	init_lux(t_lux *lux, t_v pos)
+{
+	lux->pos = pos;
+	lux->power = 1;
+	lux->flux = 666;
 }
