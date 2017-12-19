@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 19:00:15 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/18 20:06:13 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/19 18:44:56 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,21 +60,6 @@ t_v		vect_rotate_xy(t_v v, double angle)
 	tmp.y = v.x * sin(angle) + v.y * cos(angle);
 	return (tmp);
 }
-
-/*
-** Vect init
-*/
-
-t_v		vect_init(double x, double y, double z)
-{
-	t_v	v;
-
-	v.x = x;
-	v.y = y;
-	v.z = z;
-	return (v);
-}
-
 
 /*
 ** Print the vector values

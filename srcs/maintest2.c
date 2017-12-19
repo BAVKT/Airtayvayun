@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/18 20:06:09 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/19 20:44:37 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,24 +17,30 @@ void	draw(t_b *b)
             // ft_putendlcolor("draw();", MAGENTA);
 	t_ray		ray;
 	t_px		px;
+	double		min;
+	int			id;
+	int			crossid;
 
 	px.x = -1;
-	px.color = rand() % INT_MAX;
 	while (++px.x < b->winx)
 	{
 		px.y = -1;
 		while (++px.y < b->winy)
 		{
+			min = 666666666;
+			crossid = -1;
 			ray.ori = b->cam.pos;
 			ray.dir = vect_sub(draw_pixelvp(b, px), b->cam.pos);
 			vect_normalize(&ray.dir);
-			px.color = 0xff * (b->winx * px.y + px.x) / (b->winx * b->winy);
-			// *((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = px.color | px.color << 8 | px.color << 16;
-			if (calc_sphere(ray, b->sph))
+			if ((id = inter_sphere(&b->sph, ray, &min)) > 0)
+				crossid = id;
+			else if ((id = inter_plane(&b->plane, ray, &min)) > 0)
+				crossid = id;
+			if (crossid > 0)
 			{
 				SDL_LockSurface(b->img);
-				// printf("x = %d, y = %d\n", px.x, px.y);
-				*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = calc_sphere(ray, b->sph);
+
+				*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = 0xffffff;
 				SDL_UnlockSurface(b->img);
 			}
 			else
@@ -49,9 +55,7 @@ int main()
 	t_b			b;
 
 	init_b(&b);
-	b.sph.r = 0.5;
-	b.sph.center = vect_init(0, 0, 10);
-	b.sph.color = 0xffffff;
+	init_sph(&b.sph, init_vect(0, 0, 10), init_col(1, 1, 1));
 	while (event(&b))
 		draw(&b);
 	SDL_DestroyWindow(b.win);

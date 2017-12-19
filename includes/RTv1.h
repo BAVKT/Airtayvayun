@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/18 20:06:11 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/19 19:23:34 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,47 @@ typedef struct				s_v
 }							t_v;
 
 /*
+** Color struct
+*/
+
+typedef struct				s_col
+{
+	double					r;
+	double					g;
+	double					b;
+}							t_col;
+
+/*
+** Texture struct
+*/
+
+typedef struct				s_tex
+{
+	double					plasti;		//plasticité
+	double					refra;		//indice de refraction
+	double					trans;		//indice de transparence
+	double					reflect;	//reflectivite
+	double					rug;		//rugosité
+	int						hidden;
+	t_col					col;		//color
+	t_col					ka;			//coef lum ambiant
+	t_col					kd;			//coef lum diffuse
+	t_col					ks;			//coef lum specular
+}							t_tex;
+
+/*
 ** Struct for the camera
 */
 
 typedef struct				s_cam
 {
-	struct s_v				pos;
-	struct s_v				dir;
-	struct s_v				dirup;
-	struct s_v				dirright;
 	int						angle;
+	t_v						pos;
+	t_v						dir;
+	t_v						dirup;
+	t_v						dirright;
+	int						id;
+	struct s_cam			*next;
 }							t_cam;
 
 /*
@@ -47,9 +78,12 @@ typedef struct				s_cam
 
 typedef struct				s_sph
 {
-	t_v						center;
 	double					r;
-	unsigned int			color;
+	t_v						center;
+	t_col					color;
+	t_tex					tex;
+	int						id;
+	struct s_sph			*next;
 }							t_sph;
 
 /*
@@ -58,9 +92,9 @@ typedef struct				s_sph
 
 typedef struct				s_ray
 {
+	double					t;
 	t_v						ori;
 	t_v						dir;
-	double					t;
 }							t_ray;
 
 /*
@@ -71,8 +105,28 @@ typedef struct				s_px
 {
 	int						x;
 	int						y;
-	unsigned int 			color;
+	t_col		 			color;
 }							t_px;
+
+/*
+** Light struct
+*/
+
+typedef	struct				s_lux
+{
+	double					atn;		//Attenuation
+	t_v						ori;		//origine
+	t_v						light;		//vecteur vers la lumiere
+	t_col					amb;		//intensité ambiante
+	t_col					dif;		//intensite de la lumiere diffuse
+	t_col					spe;		//intensite lumiere speculaire
+	t_col 					lum_amb;	//luminosite ambiante
+	t_col					lum_dif;	//luminosite de la lumiere diffuse
+	t_col					lum_spe;	//luminosite lum speculaire
+	t_col					col;		//Couleur
+	int						id;
+	struct s_lux			*next;
+}							t_lux;
 
 /*
 ** Struct view plane - width/heigth/distance
@@ -89,16 +143,19 @@ typedef	struct				s_vp
 }							t_vp;
 
 /*
-** Light struct
+** Plane struct	| COntain the abcd for the plane equation
 */
 
-typedef	struct				s_lux
+typedef struct				s_plane
 {
-	t_v						ori;
-	double					power;
-	double 					flux;
-	unsigned int			color;
-}							t_lux;
+	double					a;
+	double					b;
+	double					c;
+	double					d;
+	int						id;
+	t_tex					tex;
+	struct s_plane			*next;
+}							t_plane;
 
 /*
 ** The base struct, containing all we need to create life
@@ -108,13 +165,14 @@ typedef struct				s_b
 {
 	int						winx;
 	int						winy;
-	struct s_cam			cam;
-	struct s_vp				vp;
-	struct s_sph			sph;
+	t_cam					cam;
+	t_vp					vp;
+	t_sph					sph;
+	t_plane					plane;
+	t_lux					lux;
 	SDL_Window				*win;
 	SDL_Surface				*img;
 }							t_b;
-
 
 /*
 ** Structs inits						| init.c
@@ -123,8 +181,10 @@ typedef struct				s_b
 void						init_b(t_b *b);
 void						init_vp(t_b *b);
 void						init_cam(t_cam *cam);
-void						init_vect(t_v *vect, double x, double y, double z);
+t_v							init_vect(double x, double y, double z);
 void						init_lux(t_lux *lux, t_v pos);
+void						init_sph(t_sph *sph, t_v v, t_col color);
+t_col						init_col(double r, double g, double b);
 
 /*
 **	Errors								| error.c
@@ -188,7 +248,51 @@ t_v							vect_init(double x, double y, double z);
 ** Sphere								| sphere.c
 */
 
-unsigned int				calc_sphere(t_ray ray, t_sph sph);
+double						calc_sphere(t_ray ray, t_sph sph);
+
+/*
+** Utilitaries for color				| color.c
+*/
+
+t_col						color_add(t_col col, t_col col2);
+t_col						color_mult(t_col col, t_col col2);
+t_col						color_multnb(t_col col, double nb);
+void						color_sat(t_col *col);
+
+/*
+** Intercept for objs 					| intersection.c
+*/
+
+int							inter_sphere(t_sph **sph, t_ray ray, double *min);
+int							inter_plane(t_plane **plane, t_ray ray, double *min);
+
+/*
+**	Plane								| plane.c
+*/
+
+double						calc_plane(t_ray ray, t_plane plane);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #endif

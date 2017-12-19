@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/18 20:06:07 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/19 18:45:34 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 void	init_b(t_b *b)
 {
-            ft_putendlcolor("init_b();", MAGENTA);
+            	ft_putendlcolor("init_b();", MAGENTA);
 	b->win = NULL;
 	b->winx = 640;
 	b->winy = 480;
@@ -33,6 +33,20 @@ void	init_b(t_b *b)
 }
 
 /*
+** Vect init
+*/
+
+t_v		init_vect(double x, double y, double z)
+{
+	t_v	v;
+
+	v.x = x;
+	v.y = y;
+	v.z = z;
+	return (v);
+}
+
+/*
 ** Init for the viewplane struct
 */
 
@@ -44,7 +58,6 @@ void	init_vp(t_b *b)
 	b->vp.xi = b->vp.w / (double)b->winx;
 	b->vp.yi = b->vp.h / (double)b->winy;
 	b->vp.dist = 0;
-		// printf("dist = %f\n", b->vp.dist);
 	b->vp.upleft = vect_sub(vect_add(b->cam.dir, vect_add(vect_multnb(&b->cam.dir, b->vp.dist),
 	vect_multnb(&b->cam.dirup, b->vp.h / 2))), vect_multnb(&b->cam.dirright, b->vp.w / 2));
 }
@@ -57,24 +70,24 @@ void	init_cam(t_cam *cam)
 {
             ft_putendlcolor("init_cam();", MAGENTA);
 	cam->angle = 60 * M_PI / 180;
-	init_vect(&cam->pos, 0, 0, -3);
-	init_vect(&cam->dir, 0, 0, 1);
-	init_vect(&cam->dirup, 0, 1, 0);
-	init_vect(&cam->dirright, 1, 0, 0);
+	cam->pos = init_vect(0, 0, -3);
+	cam->dir = init_vect(0, 0, 1);
+	cam->dirup =init_vect(0, 1, 0);
+	cam->dirright = init_vect(1, 0, 0);
 	cam->dirright = vect_prod(cam->dir, cam->dirup);
-		vect_print(cam->dirright);
 }
 
 /*
-** Set the vector's values
+** Init for sphere
 */
 
-void	init_vect(t_v *vect, double x, double y, double z)
+void	init_sph(t_sph *sph, t_v v, t_col col)
 {
-            ft_putendlcolor("init_vect();", MAGENTA);
-	vect->x = x;
-	vect->y = y;
-	vect->z = z;
+            ft_putendlcolor("init_sph();", MAGENTA);
+	sph->r = 0.5;
+	sph->center = v;
+	sph->color = col;
+
 }
 
 /*
@@ -83,7 +96,22 @@ void	init_vect(t_v *vect, double x, double y, double z)
 
 void	init_lux(t_lux *lux, t_v pos)
 {
-	lux->pos = pos;
-	lux->power = 1;
-	lux->flux = 666;
+            ft_putendlcolor("init_lux();", MAGENTA);
+	lux->ori = pos;
+	// lux->power = 1;
+	// lux->flux = 666;
+}
+
+/*
+**	Init the color struct
+*/
+
+t_col	init_col(double r, double g, double b)
+{
+	t_col	col;
+
+	col.r = r;
+	col.g = g;
+	col.b = b;
+	return (col);
 }

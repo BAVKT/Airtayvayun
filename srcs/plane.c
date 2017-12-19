@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sphere.c                                           :+:      :+:    :+:   */
+/*   plane.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/16 17:33:30 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/19 18:46:44 by vmercadi         ###   ########.fr       */
+/*   Created: 2017/12/19 17:53:52 by vmercadi          #+#    #+#             */
+/*   Updated: 2017/12/19 18:57:53 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RTv1.h"
 
 /*
-** Calculate the intersection between a ray and a spherical sphere
+** Calculate the intersection between a ray and a planical plane
 */
 
-double		calc_sphere(t_ray ray, t_sph sph)
+double		calc_plane(t_ray ray, t_plane plane)
 {
-	double	b;
-	double	c;
-	double	delta;
-	t_v		ori;
+	double	prod;
+	t_v		n;
 
-	ori = vect_sub(ray.ori, sph.center);
-	b = 2 * vect_dot(ray.dir, ori);
-	c = vect_norme2(ori) - sph.r * sph.r;
-	if ((delta = b * b - 4 * c) < 0)
+//t = - ( (A*X + B*Y + C*Z + D) / (A*DIR.x + B*DIR.y + C*DIR.z) )
+	n = init_vect(plane.a, plane.b, plane.c);
+	prod = vect_dot(n, ray.dir);
+	if (!prod)
 		return (0);
-	ray.t = (-b - sqrt(delta)) / 2;
-	if (ray.t < 0)
-		return (0);
-	return (ray.t);
+	else
+		return ((ray.t = -(vect_dot(n, ray.ori) + plane.d) / prod));
 }
