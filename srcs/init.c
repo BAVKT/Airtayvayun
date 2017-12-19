@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/19 18:45:34 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/19 22:22:15 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,25 +81,50 @@ void	init_cam(t_cam *cam)
 ** Init for sphere
 */
 
-void	init_sph(t_sph *sph, t_v v, t_col col)
+t_sph	init_sph(t_v v, t_col col)
 {
             ft_putendlcolor("init_sph();", MAGENTA);
-	sph->r = 0.5;
-	sph->center = v;
-	sph->color = col;
+	t_sph	sph;
 
+	sph.r = 0.5;
+	sph.center = v;
+	sph.color = col;
+	sph.next = NULL;
+	return (sph);
 }
 
 /*
 ** Init the lux struct
 */
 
-void	init_lux(t_lux *lux, t_v pos)
+t_lux	init_lux(t_v pos)
 {
             ft_putendlcolor("init_lux();", MAGENTA);
-	lux->ori = pos;
-	// lux->power = 1;
-	// lux->flux = 666;
+	t_lux	lux;
+
+	lux.ori = pos;
+	lux.amb = init_col(1.0, 1.0, 1.0);
+	lux.dif = init_col(0.0, 0.0, 0.0);
+	lux.spe = init_col(0.0, 0.0, 0.0);
+	lux.col = init_col(1.0, 1.0, 1.0);
+	lux.next = NULL;
+	return (lux);
+}
+
+/*
+** Init ofr the plane
+*/
+
+t_plane		init_plane(double a, double b, double c, double d)
+{
+	t_plane plane;
+
+	plane.a = a;
+	plane.b = b;
+	plane.c = c;
+	plane.d = d;
+	plane.next = NULL;
+	return (plane);
 }
 
 /*
@@ -115,3 +140,31 @@ t_col	init_col(double r, double g, double b)
 	col.b = b;
 	return (col);
 }
+
+/*
+** init texture struct
+*/
+
+t_tex		init_tex()
+{
+	t_tex	tex;
+
+	tex.rug = 1;
+	tex.plasti = 0;
+	tex.refra = 0;
+	tex.trans = 0;
+	tex.hidden = 0;
+	tex.reflect = 0;
+	tex.col = init_col(0.0, 1.0, 0.1);
+	tex.ka = init_col(1.0, 1.0, 1.0);
+	tex.kd = init_col(0.0, 0.0, 0.0);
+	tex.ks = init_col(0.0, 0.0, 0.0);
+	return (tex);
+}
+
+
+
+
+
+
+

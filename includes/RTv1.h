@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/19 19:23:34 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/19 22:24:21 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,11 +165,12 @@ typedef struct				s_b
 {
 	int						winx;
 	int						winy;
+	int						maxid;
 	t_cam					cam;
 	t_vp					vp;
-	t_sph					sph;
-	t_plane					plane;
-	t_lux					lux;
+	t_sph					*sph;
+	t_plane					*plane;
+	t_lux					*lux;
 	SDL_Window				*win;
 	SDL_Surface				*img;
 }							t_b;
@@ -182,9 +183,11 @@ void						init_b(t_b *b);
 void						init_vp(t_b *b);
 void						init_cam(t_cam *cam);
 t_v							init_vect(double x, double y, double z);
-void						init_lux(t_lux *lux, t_v pos);
-void						init_sph(t_sph *sph, t_v v, t_col color);
+t_lux						init_lux(t_v pos);
+t_sph						init_sph(t_v v, t_col color);
 t_col						init_col(double r, double g, double b);
+t_plane						init_plane(double a, double b, double c, double d);
+t_tex						init_tex();
 
 /*
 **	Errors								| error.c
@@ -245,12 +248,6 @@ t_v							vect_rotate_xy(t_v v, double angle);
 t_v							vect_init(double x, double y, double z);
 
 /*
-** Sphere								| sphere.c
-*/
-
-double						calc_sphere(t_ray ray, t_sph sph);
-
-/*
 ** Utilitaries for color				| color.c
 */
 
@@ -258,6 +255,7 @@ t_col						color_add(t_col col, t_col col2);
 t_col						color_mult(t_col col, t_col col2);
 t_col						color_multnb(t_col col, double nb);
 void						color_sat(t_col *col);
+unsigned int				col2int(t_col col);
 
 /*
 ** Intercept for objs 					| intersection.c
@@ -267,12 +265,31 @@ int							inter_sphere(t_sph **sph, t_ray ray, double *min);
 int							inter_plane(t_plane **plane, t_ray ray, double *min);
 
 /*
+** Sphere								| sphere.c
+*/
+
+double						calc_sphere(t_ray ray, t_sph sph);
+t_sph						*add_sphere(t_b *b, t_sph sph);
+t_sph						*search_sphere(t_b *b, int id);
+
+
+/*
 **	Plane								| plane.c
 */
 
 double						calc_plane(t_ray ray, t_plane plane);
+t_plane						*add_plane(t_b *b, t_plane plane);
+t_plane						*search_plane(t_b *b, int id);
 
+/*
+** Lux									| lux.c
+*/
 
+void						calc_amb(t_lux *lux, t_tex tex);
+void						calc_dif(t_lux *lux, t_tex tex, t_v n);
+void						calc_spe(t_lux *lux, t_tex tex, t_ray eye, t_v n);
+t_lux						*add_lux(t_b *b, t_lux lux);
+t_lux						*search_lux(t_b *b, int id);
 
 
 
