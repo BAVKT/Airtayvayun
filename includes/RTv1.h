@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/19 22:24:21 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/20 15:36:04 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ typedef	struct				s_lux
 }							t_lux;
 
 /*
-** Struct view plane - width/heigth/distance
+** Struct view plane | width/heigth/distance
 */
 
 typedef	struct				s_vp
@@ -143,7 +143,7 @@ typedef	struct				s_vp
 }							t_vp;
 
 /*
-** Plane struct	| COntain the abcd for the plane equation
+** Plane struct	| Contain the abcd for the plane equation
 */
 
 typedef struct				s_plane
@@ -156,6 +156,16 @@ typedef struct				s_plane
 	t_tex					tex;
 	struct s_plane			*next;
 }							t_plane;
+
+/*
+** Parsing struct
+*/
+
+typedef struct				s_pars
+{
+	int						fd;
+}							t_pars;
+
 
 /*
 ** The base struct, containing all we need to create life
@@ -240,10 +250,10 @@ t_v							vect_multnb(t_v *v, double nb);
 ** Utilitaries about vectors			| vect_utils.c
 */
 
-void						vect_normalize(t_v *v);
 double						vect_norme(t_v v);
 double						vect_norme2(t_v v);
 void						vect_print(t_v v);
+void						vect_normalize(t_v *v);
 t_v							vect_rotate_xy(t_v v, double angle);
 t_v							vect_init(double x, double y, double z);
 

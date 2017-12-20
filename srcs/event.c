@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/19 17:19:06 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/20 17:30:09 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int		event(t_b *b)
 			return (0);
 		else if (ev == SDLK_DOWN | ev == SDLK_UP | ev == SDLK_LEFT | ev == SDLK_RIGHT)
 			ev_rotate_xy(b, ev);
-		else if (ev == SDLK_w || ev == SDLK_a | ev == SDLK_s | ev == SDLK_d)
+		else if (ev == SDLK_w || ev == SDLK_a || ev == SDLK_s || ev == SDLK_d || ev == SDLK_KP_MINUS || ev == SDLK_KP_PLUS)
 			b->cam.pos = ev_move(b->cam.pos, ev);
 	}
 	return (1);
@@ -46,6 +46,15 @@ void	ev_rotate_xy(t_b *b, int ev)
 	int	angle;
 
 	angle = 10.0 * M_PI / 180.0;
+	// if (ev == SDLK_DOWN)
+	// 	b->cam.dirup = vect_rotate_xy(b->cam.dirup, -angle);
+	// else if (ev == SDLK_UP)
+	// 	b->cam.dirup = vect_rotate_xy(b->cam.dirup, angle);
+	// else if (ev == SDLK_RIGHT)
+	// 	b->cam.dirright = vect_rotate_xy(b->cam.dirright, angle);
+	// else if (ev == SDLK_LEFT)
+	// 	b->cam.dirright = vect_rotate_xy(b->cam.dirright, -angle);
+	// b->cam.dir = vect_prod(b->cam.dirup, b->cam.dirright);
 	if (ev == SDLK_DOWN)
 		b->cam.dirup = vect_rotate_xy(b->cam.dirup, -angle);
 	else if (ev == SDLK_UP)
@@ -68,12 +77,16 @@ t_v		ev_move(t_v v, int ev)
 
 	tmp = v;
 	if (ev == SDLK_w)
-		tmp.z = v.z + 0.1;
+		tmp.y = v.y + 0.01;
 	else if (ev == SDLK_s)
-		tmp.z = v.z - 0.1;
+		tmp.y = v.y - 0.01;
 	else if (ev == SDLK_a)
-		tmp.x = v.x - 0.1;
+		tmp.x = v.x - 0.01;
 	else if (ev == SDLK_d)
-		tmp.x = v.x + 0.1;
+		tmp.x = v.x + 0.01;
+	else if (ev == SDLK_KP_MINUS)
+		tmp.z = v.z - 0.01;
+	else if (ev == SDLK_KP_PLUS)
+		tmp.z = v.z + 0.01;
 	return (tmp);
 }

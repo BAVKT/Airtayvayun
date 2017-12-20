@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/19 18:58:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/19 22:14:17 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/20 17:30:14 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 void	calc_amb(t_lux *lux, t_tex tex)
 {
-	lux->lum_amb = color_mult(lux->amb, color_mult(lux->ka, tex.col));
+	lux->lum_amb = color_mult(lux->amb, color_mult(tex.ka, tex.col));
 }
 
 /*
@@ -31,7 +31,7 @@ void	calc_amb(t_lux *lux, t_tex tex)
 
 void	calc_dif(t_lux *lux, t_tex tex, t_v n)
 {
-	lux->lum_dif = color_mult(lux->dif, color_multnb(color_mult(lux->kd, tex.col)), vect_dot(lux->light, n));
+	lux->lum_dif = color_mult(lux->dif, color_multnb(color_mult(tex.kd, tex.col), vect_dot(lux->light, n)));
 }
 
 /*
@@ -43,9 +43,9 @@ void	calc_spe(t_lux *lux, t_tex tex, t_ray eye, t_v n)
 	t_col	plasti;
 	t_v		reflect;
 
-	reflect = init_vect();
-	plasti = col_add(col_multnb(tex.col, 1 - tex.plasti), init_col(tex.plasti, tex.plasti, tex.plasti));
-	lux->lum_spe = color_mult(lux->spe, color_multnb(color_mult(lux->ks, plasti)), pow(vect_dot(eye.dir, n), tex.rug));
+	reflect = init_vect(0, 0, 0);
+	plasti = color_add(color_multnb(tex.col, 1 - tex.plasti), init_col(tex.plasti, tex.plasti, tex.plasti));
+	lux->lum_spe = color_mult(lux->spe, color_multnb(color_mult(tex.ks, plasti), pow(vect_dot(eye.dir, n), tex.rug)));
 }
 
 /*

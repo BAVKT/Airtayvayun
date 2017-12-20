@@ -1,0 +1,19 @@
+<SCENE>
+<SPHERE>
+<POS>1, 1, 1</POS>		
+<SIZE>1</SIZE>			
+<COLOR>red</COLOR>		
+</SPHERE>
+<PLANE>
+<POS>-2, 2, 2</POS>		
+<SIZE>10, 20</SIZE>		
+<COLOR>white</COLOR>	
+</PLANE>
+<CAMERA>
+<POS>0, 0, 1</POS>		
+<DIR>0, 0, 1</DIR>		
+</CAMERA>
+<LUX>
+<POS>1 , 0 , 1</POS>	
+</LUX>
+</SCENE>

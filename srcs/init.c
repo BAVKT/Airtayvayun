@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/19 22:22:15 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/20 17:30:11 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@ void	init_b(t_b *b)
 	b->winy = 480;
 	init_cam(&b->cam);
 	init_vp(b);
+	b->sph = NULL;
+	b->lux = NULL;
+	b->plane = NULL;
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 		error_quit(1);
 	if (!(b->win = SDL_CreateWindow("RTv1",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,
@@ -70,7 +73,7 @@ void	init_cam(t_cam *cam)
 {
             ft_putendlcolor("init_cam();", MAGENTA);
 	cam->angle = 60 * M_PI / 180;
-	cam->pos = init_vect(0, 0, -3);
+	cam->pos = init_vect(0, 0, -1);
 	cam->dir = init_vect(0, 0, 1);
 	cam->dirup =init_vect(0, 1, 0);
 	cam->dirright = init_vect(1, 0, 0);
@@ -86,10 +89,11 @@ t_sph	init_sph(t_v v, t_col col)
             ft_putendlcolor("init_sph();", MAGENTA);
 	t_sph	sph;
 
-	sph.r = 0.5;
+	sph.r = 1;
 	sph.center = v;
 	sph.color = col;
 	sph.next = NULL;
+	sph.tex = init_tex();
 	return (sph);
 }
 
@@ -117,6 +121,7 @@ t_lux	init_lux(t_v pos)
 
 t_plane		init_plane(double a, double b, double c, double d)
 {
+            ft_putendlcolor("init_plane();", MAGENTA);
 	t_plane plane;
 
 	plane.a = a;
@@ -124,6 +129,7 @@ t_plane		init_plane(double a, double b, double c, double d)
 	plane.c = c;
 	plane.d = d;
 	plane.next = NULL;
+	plane.tex = init_tex();
 	return (plane);
 }
 
@@ -133,6 +139,7 @@ t_plane		init_plane(double a, double b, double c, double d)
 
 t_col	init_col(double r, double g, double b)
 {
+            // ft_putendlcolor("init_col();", MAGENTA);
 	t_col	col;
 
 	col.r = r;
@@ -147,6 +154,7 @@ t_col	init_col(double r, double g, double b)
 
 t_tex		init_tex()
 {
+            // ft_putendlcolor("init_tex();", MAGENTA);
 	t_tex	tex;
 
 	tex.rug = 1;
@@ -161,10 +169,3 @@ t_tex		init_tex()
 	tex.ks = init_col(0.0, 0.0, 0.0);
 	return (tex);
 }
-
-
-
-
-
-
-
