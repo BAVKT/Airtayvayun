@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/20 15:36:04 by vmercadi         ###   ########.fr       */
+/*   Updated: 2017/12/20 17:34:43 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct				s_tex
 	double					reflect;	//reflectivite
 	double					rug;		//rugosité
 	int						hidden;
+	t_v						n;			//normale oklm trkl
 	t_col					col;		//color
 	t_col					ka;			//coef lum ambiant
 	t_col					kd;			//coef lum diffuse

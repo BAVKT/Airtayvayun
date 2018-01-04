@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/20 17:30:11 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/04 18:05:24 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,22 @@ t_plane		init_plane(double a, double b, double c, double d)
 	plane.next = NULL;
 	plane.tex = init_tex();
 	return (plane);
+}
+
+/*
+** Init plane V2.0 the return of the comeback
+*/
+
+t_plane		init_plane2(t_v ori, t_v h, t_v w)
+{
+	t_v		n;
+	t_plane	p;
+	// double	nb;
+
+	n = vect_prod(w, h);
+	vect_normalize(&n);
+	p = init_plane(n.x, n.y, n.z, -vect_dot(n, ori));
+	return (p);
 }
 
 /*
