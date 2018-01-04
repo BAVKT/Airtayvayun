@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/20 17:30:09 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/04 21:12:59 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,16 +77,16 @@ t_v		ev_move(t_v v, int ev)
 
 	tmp = v;
 	if (ev == SDLK_w)
-		tmp.y = v.y + 0.01;
+		tmp.y = v.y + 0.06;
 	else if (ev == SDLK_s)
-		tmp.y = v.y - 0.01;
+		tmp.y = v.y - 0.06;
 	else if (ev == SDLK_a)
-		tmp.x = v.x - 0.01;
+		tmp.x = v.x - 0.06;
 	else if (ev == SDLK_d)
-		tmp.x = v.x + 0.01;
+		tmp.x = v.x + 0.06;
 	else if (ev == SDLK_KP_MINUS)
-		tmp.z = v.z - 0.01;
+		tmp.z = v.z - 0.06;
 	else if (ev == SDLK_KP_PLUS)
-		tmp.z = v.z + 0.01;
+		tmp.z = v.z + 0.06;
 	return (tmp);
 }

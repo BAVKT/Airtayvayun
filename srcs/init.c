@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/04 18:05:24 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/04 21:12:25 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,15 +108,15 @@ t_lux	init_lux(t_v pos)
 
 	lux.ori = pos;
 	lux.amb = init_col(1.0, 1.0, 1.0);
-	lux.dif = init_col(0.0, 0.0, 0.0);
-	lux.spe = init_col(0.0, 0.0, 0.0);
+	lux.dif = init_col(1.0, 1.0, 1.0);
+	lux.spe = init_col(1.0, 1.0, 1.0);
 	lux.col = init_col(1.0, 1.0, 1.0);
 	lux.next = NULL;
 	return (lux);
 }
 
 /*
-** Init ofr the plane
+** Init for the plane
 */
 
 t_plane		init_plane(double a, double b, double c, double d)
@@ -181,7 +181,7 @@ t_tex		init_tex()
 	tex.reflect = 0;
 	tex.col = init_col(0.0, 1.0, 0.1);
 	tex.ka = init_col(1.0, 1.0, 1.0);
-	tex.kd = init_col(0.0, 0.0, 0.0);
+	tex.kd = init_col(1.0, 1.0, 1.0);
 	tex.ks = init_col(0.0, 0.0, 0.0);
 	return (tex);
 }

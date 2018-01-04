@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/04 18:06:33 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/04 21:12:30 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,8 @@ int main()
 	t_b			b;
 
 	init_b(&b);
-	add_lux(&b, init_lux(init_vect(2.0, 2.0, 2.0)));
-	add_sphere(&b, init_sph(init_vect(0, 0, 10), init_col(1.0, 0.0, 0.0)));
+	add_lux(&b, init_lux(init_vect(0.0, 0.0, 25.0)));
+	add_sphere(&b, init_sph(init_vect(0, 0, 10), init_col(1.0, 1.0, 1.0)));
 	add_plane(&b, init_plane(0.0, 1.0, 0.0, 3.0));
 	while (event(&b))
 		draw(&b);
