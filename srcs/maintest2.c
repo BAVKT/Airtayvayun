@@ -6,11 +6,39 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/04 21:48:02 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/15 20:51:08 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RTv1.h"
+
+/*
+** Need creer un atof()
+** Need le parsing/check des faces
+**
+** Creation de la struct s_som
+** Creation de la struct s_face
+** Creation de la struct s_vl
+** Ajout de parse_error()
+** Ajout de parse_main()
+** Ajout de parse_redirect()
+** Ajout de parse_v()
+** Ajout de parse_vt()
+** Ajout de parse_vn()
+** Ajout de parse_f()
+** Ajout de check_f()
+**
+**
+**
+**
+**
+**
+*/
+
+
+
+
+
 
 void	draw(t_b *b)
 {

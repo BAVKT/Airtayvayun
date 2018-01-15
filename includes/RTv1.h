@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/20 17:34:43 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/15 20:49:35 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@ typedef struct				s_v
 	double					y;
 	double					z;
 }							t_v;
+
+/*
+** struct for a basic list of vectors
+*/
+
+typedef struct				s_vl
+{
+	double					x;
+	double					y;
+	double					z;
+	struct s_v				*next;
+}							t_vl;
 
 /*
 ** Color struct
@@ -159,14 +171,39 @@ typedef struct				s_plane
 }							t_plane;
 
 /*
+** Sommet d'une face
+*/
+
+typedef struct				s_som
+{
+	t_v						v;		//Sommet
+	t_v						vt;		//Coordonnée texture pour un sommet
+	t_v						vn;		//Normale du sommet
+}							t_som;
+
+/*
+** List of the faces of the obj
+*/
+
+typedef struct				s_face
+{
+	unsigned int			id;
+	t_som					som1;
+	t_som					som2;
+	t_som					som3;
+	t_face					*next;
+}							t_face;
+
+/*
 ** Parsing struct
 */
 
 typedef struct				s_pars
 {
-	int						fd;
+	s_vl					v;
+	s_vl					vt;
+	s_vl					vn;
 }							t_pars;
-
 
 /*
 ** The base struct, containing all we need to create life
@@ -302,7 +339,19 @@ void						calc_spe(t_lux *lux, t_tex tex, t_ray eye, t_v n);
 t_lux						*add_lux(t_b *b, t_lux lux);
 t_lux						*search_lux(t_b *b, int id);
 
-
+/*
+** Obj parsing							| parseur.c
+*/
+void						parse_error(int e, char *s);
+void						parse_main(char *av);
+void						parse_redirect(t_pars *pars, char *s);
+void						parse_v(t_pars *pars, char **tab);
+void						parse_vt(t_pars *pars, char **tab);
+void						parse_vn(t_pars *pars, char **tab);
+void						parse_f(t_pars *pars, char **tab);
+void						check_f(char **tab);
+void						parse_mtl(char *s);
+int							ft_isnum(char *str);
 
 
 

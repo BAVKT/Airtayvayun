@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/04 21:12:25 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/15 14:59:29 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ t_lux	init_lux(t_v pos)
 	t_lux	lux;
 
 	lux.ori = pos;
-	lux.amb = init_col(1.0, 1.0, 1.0);
+	lux.amb = init_col(1.0, 0.0, 0.0);
 	lux.dif = init_col(1.0, 1.0, 1.0);
 	lux.spe = init_col(1.0, 1.0, 1.0);
 	lux.col = init_col(1.0, 1.0, 1.0);
