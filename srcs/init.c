@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/15 14:59:29 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/19 17:03:58 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,10 @@ void	init_b(t_b *b)
 	b->sph = NULL;
 	b->lux = NULL;
 	b->plane = NULL;
+	b->amb = init_col(1.0, 1.0, 1.0);
+	b->inter = (t_inter *)malloc(sizeof(t_inter));
+	b->inter->min = 666666666;
+	//init_inter(b->inter);
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 		error_quit(1);
 	if (!(b->win = SDL_CreateWindow("RTv1",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,
@@ -36,12 +40,36 @@ void	init_b(t_b *b)
 }
 
 /*
+** VEry important function to INITIALIZE the inter min at 666666666
+*/
+
+void	init_inter(t_inter *inter)
+{
+	inter = (t_inter *)malloc(sizeof(t_inter));
+	inter->min = 666666666;
+}
+
+/*
 ** Vect init
 */
 
 t_v		init_vect(double x, double y, double z)
 {
 	t_v	v;
+
+	v.x = x;
+	v.y = y;
+	v.z = z;
+	return (v);
+}
+
+/*
+** Vect list init
+*/
+
+t_vl		init_vectl(double x, double y, double z)
+{
+	t_vl	v;
 
 	v.x = x;
 	v.y = y;
@@ -94,6 +122,8 @@ t_sph	init_sph(t_v v, t_col col)
 	sph.color = col;
 	sph.next = NULL;
 	sph.tex = init_tex();
+	sph.tex.ks = init_col(1.0, 1.0, 1.0);
+	sph.tex.kd = init_col(1.0, 1.0, 1.0);
 	return (sph);
 }
 
@@ -107,7 +137,6 @@ t_lux	init_lux(t_v pos)
 	t_lux	lux;
 
 	lux.ori = pos;
-	lux.amb = init_col(1.0, 0.0, 0.0);
 	lux.dif = init_col(1.0, 1.0, 1.0);
 	lux.spe = init_col(1.0, 1.0, 1.0);
 	lux.col = init_col(1.0, 1.0, 1.0);
@@ -179,7 +208,7 @@ t_tex		init_tex()
 	tex.trans = 0;
 	tex.hidden = 0;
 	tex.reflect = 0;
-	tex.col = init_col(0.0, 1.0, 0.1);
+	tex.col = init_col(1.0, 1.0, 1.0);
 	tex.ka = init_col(1.0, 1.0, 1.0);
 	tex.kd = init_col(1.0, 1.0, 1.0);
 	tex.ks = init_col(0.0, 0.0, 0.0);

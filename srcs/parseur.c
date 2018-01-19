@@ -6,11 +6,15 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/15 20:35:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/15 20:51:12 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/18 18:30:08 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RTv1.h"
+
+/*
+** Errors for parsing
+*/
 
 void	parse_error(int e, char *s)
 {
@@ -21,11 +25,24 @@ void	parse_error(int e, char *s)
 	else if (e == 3)
 		ft_putendl("Le fichier est vide ou n'existe pas.");
 	else if (e == 4)
-	{
-		ft_putstr("Erreur formatage à :");
+		ft_putstr("Erreur formatage à : ");
+	else if (e == 5)
+		ft_putstr("Mauvais nombre d'arguments pour la face : ");
+	else if (e == 666)
+		halp();
+	if (s)
 		ft_putendl(s);
-	}
 	exit(0);
+}
+
+/*
+** Help for formating files
+*/
+
+void	halp()
+{
+
+
 }
 
 /*
@@ -49,14 +66,13 @@ t_pars		*parse_init()
 ** Start the parsing
 */
 
-void	parse_main(char *av)
+void	parse_main(t_b *b, char *av)
 {
 	int		i;
 	int		fd;
 	char	*s;
-	t_pars	*pars;
 
-	pars = parse_init();
+	b->pars = parse_init();
 	if (!ft_strcmp(av, "usage"))
 		parse_error(2);
 	if ((fd = open(av, O_RDONLY)) < 0)
@@ -64,8 +80,9 @@ void	parse_main(char *av)
 	s = NULL;
 	while (get_next_line(fd, &s) > 0)
 	{
+		s = ft_strtrim(s);
 		if (s[0] != '#' && (s[0] != '/' && s[1] != '/'))
-			parse_redirect(pars, s);
+			parse_redirect(b->pars, s);
 		free(s);
 	}
 	close(fd);
@@ -85,11 +102,11 @@ void	parse_redirect(t_pars *pars, char *s)
 	if (tab_len(tab) > 4)
 		parse_error(4, s);
 	if (!(ft_strcmp(tab[0], "v")))
-		parse_v(pars, tab);
+		parse_som(pars->v, tab);
 	else if (!(ft_strcmp(tab[0], "vt")))
-		parse_vt(pars, tab);
+		parse_som(pars->vt, tab);
 	else if (!(ft_strcmp(tab[0], "vn")))
-		parse_vn(pars, tab);
+		parse_som(pars->vn, tab);
 	else if (!(ft_strcmp(tab[0], "f")))
 		parse_f(pars, tab);
 	else
@@ -100,60 +117,20 @@ void	parse_redirect(t_pars *pars, char *s)
 ** Parse and add the line to v list
 */
 
-void	parse_v(t_pars *pars, char **tab)
+void	parse_som(s_vl *vl, char **tab)
 {
 	double	nb1;
 	double	nb2;
 	double	nb3;
 
-	if (!(nb1 = atof(tab[1])))
+	if (!(nb1 = ft_atof(tab[1])))
 		parse_error(4, tab[1]);
-	if (!(nb1 = atof(tab[2])))
+	if (!(nb1 = ft_atof(tab[2])))
 		parse_error(4, tab[2]);
-	if (!(nb1 = atof(tab[3])))
+	if (!(nb1 = ft_atof(tab[3])))
 		parse_error(4, tab[3]);
-	pars->v = vect_init(nb1, nb2, nb3);
-	pars->v->next = NULL;
-}
-
-/*
-** Parse and add the line to vt list
-*/
-
-void	parse_vt(t_pars *pars, char **tab)
-{
-	double	nb1;
-	double	nb2;
-	double	nb3;
-
-	if (!(nb1 = atof(tab[1])))
-		parse_error(4, tab[1]);
-	if (!(nb1 = atof(tab[2])))
-		parse_error(4, tab[2]);
-	if (!(nb1 = atof(tab[3])))
-		parse_error(4, tab[3]);
-	pars->vt = vect_init(nb1, nb2, nb3);
-	pars->vt->next = NULL;
-}
-
-/*
-** Parse and add the line to vn list
-*/
-
-void	parse_vn(t_pars *pars, char **tab)
-{
-	double	nb1;
-	double	nb2;
-	double	nb3;
-
-	if (!(nb1 = atof(tab[1])))
-		parse_error(4, tab[1]);
-	if (!(nb1 = atof(tab[2])))
-		parse_error(4, tab[2]);
-	if (!(nb1 = atof(tab[3])))
-		parse_error(4, tab[3]);
-	pars->vn = vect_init(nb1, nb2, nb3);
-	pars->vn->next = NULL;
+	vl = init_vectl(nb1, nb2, nb3);
+	vl->next = NULL;
 }
 
 /*
@@ -166,6 +143,8 @@ void	check_f(char **tab)
 	int		i;
 	int		j;
 
+	if (tab_len(tab) != 4)
+		parse_error(5, ft_implode(tab, ' '));
 	j = -1;
 	while (++j < 4)
 	{
@@ -203,6 +182,33 @@ int		ft_isnum(char *str)
 			return (0);
 	}
 	return (1);
+}
+
+/*
+** Implode a tab in an str separating with the given char
+*/
+
+char	*ft_implode(char **tab, char c)
+{
+	int 	size;
+	int		i;
+	int		j;
+	int		k;
+	char	*str;
+
+	i = -1;
+	k = -1;
+	size = tab_len(tab);
+	str = ft_strnew(0);
+	while (tab[++i])
+	{
+		j = -1;
+		while (tab[i][++j])
+			str[++k] = tab[i][j];
+		str[++k] = c;
+	}
+	str[++k] = '\0';
+	return (str);
 }
 
 /*

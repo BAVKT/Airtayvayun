@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/19 18:58:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/04 18:18:22 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/19 16:58:35 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,32 +20,32 @@
 ** Calculate the ambiant lux
 */
 
-void	calc_amb(t_lux *lux, t_tex tex)
+t_col	calc_amb(t_b *b)
 {
-	lux->lum_amb = color_mult(lux->amb, color_mult(tex.ka, tex.col));
+	return (color_mult(b->amb, color_mult(b->inter->tex.ka, b->inter->tex.col)));
 }
 
 /*
 ** Calculate the diffuse lux
 */
 
-void	calc_dif(t_lux *lux, t_tex tex, t_v n)
+void	calc_dif(t_lux *lux, t_inter inter)
 {
-	lux->lum_dif = color_mult(lux->dif, color_multnb(color_mult(tex.kd, tex.col), vect_dot(lux->light, n)));
+	lux->lum_dif = color_mult(lux->dif, color_multnb(color_mult(inter.tex.kd, inter.tex.col), vect_dot(lux->light, inter.n)));
 }
 
 /*
 ** Calculate the specular lux
 */
 
-void	calc_spe(t_lux *lux, t_tex tex, t_ray eye, t_v n)
+void	calc_spe(t_lux *lux, t_inter inter, t_v eye)
 {
 	t_col	plasti;
 	t_v		reflect;
 
 	reflect = init_vect(0, 0, 0);
-	plasti = color_add(color_multnb(tex.col, 1 - tex.plasti), init_col(tex.plasti, tex.plasti, tex.plasti));
-	lux->lum_spe = color_mult(lux->spe, color_multnb(color_mult(tex.ks, plasti), pow(vect_dot(eye.dir, n), tex.rug)));
+	plasti = color_add(color_multnb(inter.tex.col, 1 - inter.tex.plasti), init_col(inter.tex.plasti, inter.tex.plasti, inter.tex.plasti));
+	lux->lum_spe = color_mult(lux->spe, color_multnb(color_mult(inter.tex.ks, plasti), pow(vect_dot(eye, inter.n), inter.tex.rug)));
 }
 
 /*

@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/15 20:49:35 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/19 16:58:16 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <SDL.h>
 # include <math.h>
 # include <limits.h>
+# define MAX_DEEP 1
 					#include <stdio.h>
 /*
 ** struct for a basic vector
@@ -63,7 +64,7 @@ typedef struct				s_tex
 	double					reflect;	//reflectivite
 	double					rug;		//rugosité
 	int						hidden;
-	t_v						n;			//normale oklm trkl
+	//t_v						n;			//normale oklm trkl
 	t_col					col;		//color
 	t_col					ka;			//coef lum ambiant
 	t_col					kd;			//coef lum diffuse
@@ -130,7 +131,6 @@ typedef	struct				s_lux
 	double					atn;		//Attenuation
 	t_v						ori;		//origine
 	t_v						light;		//vecteur vers la lumiere
-	t_col					amb;		//intensité ambiante
 	t_col					dif;		//intensite de la lumiere diffuse
 	t_col					spe;		//intensite lumiere speculaire
 	t_col 					lum_amb;	//luminosite ambiante
@@ -191,7 +191,7 @@ typedef struct				s_face
 	t_som					som1;
 	t_som					som2;
 	t_som					som3;
-	t_face					*next;
+	struct s_face			*next;
 }							t_face;
 
 /*
@@ -200,10 +200,24 @@ typedef struct				s_face
 
 typedef struct				s_pars
 {
-	s_vl					v;
-	s_vl					vt;
-	s_vl					vn;
+	t_vl					*v;
+	t_vl					*vt;
+	t_vl					*vn;
+	t_face					*facelist;
 }							t_pars;
+
+/*
+** Intersection struct
+*/
+
+typedef struct				s_inter
+{
+	t_ray					to_cam;
+	t_ray					to_lux;
+	t_tex					tex;
+	t_v						n;
+	double					min;
+}							t_inter;
 
 /*
 ** The base struct, containing all we need to create life
@@ -214,11 +228,14 @@ typedef struct				s_b
 	int						winx;
 	int						winy;
 	int						maxid;
+	t_pars					pars;
 	t_cam					cam;
 	t_vp					vp;
 	t_sph					*sph;
 	t_plane					*plane;
 	t_lux					*lux;
+	t_col					amb;		//intensité ambiante
+	t_inter					*inter;
 	SDL_Window				*win;
 	SDL_Surface				*img;
 }							t_b;
@@ -231,11 +248,13 @@ void						init_b(t_b *b);
 void						init_vp(t_b *b);
 void						init_cam(t_cam *cam);
 t_v							init_vect(double x, double y, double z);
+t_vl						init_vectl(double x, double y, double z);
 t_lux						init_lux(t_v pos);
 t_sph						init_sph(t_v v, t_col color);
 t_col						init_col(double r, double g, double b);
 t_plane						init_plane(double a, double b, double c, double d);
 t_tex						init_tex();
+void						init_inter(t_inter *inter);
 
 /*
 **	Errors								| error.c
@@ -309,23 +328,23 @@ unsigned int				col2int(t_col col);
 ** Intercept for objs 					| intersection.c
 */
 
-int							inter_sphere(t_sph **sph, t_ray ray, double *min);
-int							inter_plane(t_plane **plane, t_ray ray, double *min);
+int							inter_sphere(t_sph **sph, t_ray *ray, double *min);
+int							inter_plane(t_plane **plane, t_ray *ray, double *min);
+t_inter						*inter_obj(t_b *b, t_ray *ray);
 
 /*
 ** Sphere								| sphere.c
 */
 
-double						calc_sphere(t_ray ray, t_sph sph);
+double						calc_sphere(t_ray *ray, t_sph sph);
 t_sph						*add_sphere(t_b *b, t_sph sph);
 t_sph						*search_sphere(t_b *b, int id);
-
 
 /*
 **	Plane								| plane.c
 */
 
-double						calc_plane(t_ray ray, t_plane plane);
+double						calc_plane(t_ray *ray, t_plane plane);
 t_plane						*add_plane(t_b *b, t_plane plane);
 t_plane						*search_plane(t_b *b, int id);
 
@@ -333,9 +352,9 @@ t_plane						*search_plane(t_b *b, int id);
 ** Lux									| lux.c
 */
 
-void						calc_amb(t_lux *lux, t_tex tex);
-void						calc_dif(t_lux *lux, t_tex tex, t_v n);
-void						calc_spe(t_lux *lux, t_tex tex, t_ray eye, t_v n);
+t_col						calc_amb(t_b *b);
+void						calc_dif(t_lux *lux, t_inter inter);
+void						calc_spe(t_lux *lux, t_inter inter, t_v eye);
 t_lux						*add_lux(t_b *b, t_lux lux);
 t_lux						*search_lux(t_b *b, int id);
 
@@ -343,7 +362,7 @@ t_lux						*search_lux(t_b *b, int id);
 ** Obj parsing							| parseur.c
 */
 void						parse_error(int e, char *s);
-void						parse_main(char *av);
+void						parse_main(t_b *b, char *av);
 void						parse_redirect(t_pars *pars, char *s);
 void						parse_v(t_pars *pars, char **tab);
 void						parse_vt(t_pars *pars, char **tab);
@@ -352,6 +371,7 @@ void						parse_f(t_pars *pars, char **tab);
 void						check_f(char **tab);
 void						parse_mtl(char *s);
 int							ft_isnum(char *str);
+char						*ft_implode(char **tab, char c);
 
 
 
