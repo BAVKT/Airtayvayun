@@ -29,7 +29,6 @@
 
 // void	shadow(t_b *b, t_ray light, t_lux *lux)
 // {
-
 // }
 
 /*
