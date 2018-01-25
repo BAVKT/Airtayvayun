@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/19 17:03:58 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/19 18:06:32 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ void	init_b(t_b *b)
 	b->sph = NULL;
 	b->lux = NULL;
 	b->plane = NULL;
-	b->amb = init_col(1.0, 1.0, 1.0);
+	b->amb = init_col(0.2, 0.2, 0.2);
 	b->inter = (t_inter *)malloc(sizeof(t_inter));
-	b->inter->min = 666666666;
+	b->max = 66666666;
 	//init_inter(b->inter);
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 		error_quit(1);

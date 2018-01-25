@@ -62,15 +62,15 @@ void		color_sat(t_col *col)
 {
 	if (col->r > 1.0)
 		col->r = 1.0;
+	else if (col->r < 0.0)
+		col->r = 0.0;
 	if (col->g > 1.0)
 		col->g = 1.0;
+	else if (col->g < 0.0)
+		col->g = 0.0;
 	if (col->b > 1.0)
 		col->b = 1.0;
-	if (col->r < 0.0)
-		col->r = 0.0;
-	if (col->g < 0.0)
-		col->g = 0.0;
-	if (col->b < 0.0)
+	else if (col->b < 0.0)
 		col->b = 0.0;
 }
 
@@ -89,3 +89,22 @@ unsigned int	col2int(t_col col)
 	b = (unsigned int)(col.b * 255.0);
 	return ((r << 16) | (g << 8) | b);
 }
+
+/*
+** Print color
+*/
+
+void	print_col(t_col col)
+{
+	printf("r = %f | g = %f | b = %f \n", col.r, col.g, col.b);
+}
+
+
+
+
+
+
+
+
+
+

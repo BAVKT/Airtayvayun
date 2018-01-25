@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/19 16:58:16 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/19 18:06:35 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,6 +225,7 @@ typedef struct				s_inter
 
 typedef struct				s_b
 {
+	double					max;
 	int						winx;
 	int						winy;
 	int						maxid;
@@ -323,13 +324,15 @@ t_col						color_mult(t_col col, t_col col2);
 t_col						color_multnb(t_col col, double nb);
 void						color_sat(t_col *col);
 unsigned int				col2int(t_col col);
+void						print_col(t_col col);
+
 
 /*
 ** Intercept for objs 					| intersection.c
 */
 
-int							inter_sphere(t_sph **sph, t_ray *ray, double *min);
-int							inter_plane(t_plane **plane, t_ray *ray, double *min);
+int							inter_sphere(t_b *b, t_ray *ray);
+int							inter_plane(t_b *b, t_ray *ray);
 t_inter						*inter_obj(t_b *b, t_ray *ray);
 
 /*

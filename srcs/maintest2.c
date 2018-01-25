@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/19 18:05:20 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/19 18:06:30 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,14 @@ void	draw(t_b *b)
 						light.ori = vect_multnb(&ray.dir, ray.t);
 						light.dir = lux->light;
 						calc_dif(lux, *b->inter);
-						calc_spe(lux, *b->inter, vect_multnb(&ray.dir, -1));
-						col = color_add(col, color_add(lux->lum_amb, lux->lum_dif));
+						// calc_spe(lux, *b->inter, vect_multnb(&ray.dir, -1));
+						col = color_add(col, lux->lum_dif);
 					}
+					// if (px.y == 0)
+					// 	print_col(col);
 					lux = lux->next;
 				}
+				color_sat(&col);
 				SDL_LockSurface(b->img);
 				*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = col2int(col);
 				SDL_UnlockSurface(b->img);
@@ -89,11 +92,11 @@ int main()
 	t_b			b;
 
 	init_b(&b);
-	add_lux(&b, init_lux(init_vect(0.0, 0.0, 25.0)));
+	add_lux(&b, init_lux(init_vect(10.0, 0.0, 0.0)));
 	add_sphere(&b, init_sph(init_vect(0, 0, 10), init_col(0.0, 1.0, 0.0)));
 	add_plane(&b, init_plane(0.0, 1.0, 0.0, 3.0));
-	b.sph->tex.col = init_col(1.0, 1.0, 0.0);
-	b.plane->tex.col = init_col(0.0, 0.0, 1.0);
+	b.sph->tex.col = init_col(1.0, 1.0, 1.0);
+	b.plane->tex.col = init_col(0.0, 1.0, 1.0);
 	while (event(&b))
 		draw(&b);
 	SDL_DestroyWindow(b.win);
