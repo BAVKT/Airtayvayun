@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 16:01:40 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 16:41:59 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,26 @@ t_col	init_col(double r, double g, double b)
 	col.g = g;
 	col.b = b;
 	return (col);
+}
+
+/*
+** Init for a matrice
+*/
+
+t_matrice	init_matrice()
+{
+	int			i;
+	int			j;
+	t_matrice	m;
+
+	i = -1;
+	while (++i < 3)
+	{
+		j = -1;
+		while (++j < 3)
+			m.data[i][j] = 0;
+	}
+	return (m);
 }
 
 /*

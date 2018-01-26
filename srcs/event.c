@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 16:02:51 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 17:05:36 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,11 @@ int		event(t_b *b)
 void	ev_rotate_xy(t_b *b, int ev)
 {
 			ft_putendlcolor("ev_rotate_xy();", MAGENTA);
-	int	angle;
+	double	angle;
 
 	angle = 10.0 * M_PI / 180.0;
+	printf("angle = %f", angle);
+
 	// if (ev == SDLK_DOWN)
 	// 	b->cam.dirup = vect_rotate_xy(b->cam.dirup, -angle);
 	// else if (ev == SDLK_UP)
@@ -56,13 +58,13 @@ void	ev_rotate_xy(t_b *b, int ev)
 	// 	b->cam.dirright = vect_rotate_xy(b->cam.dirright, -angle);
 	// b->cam.dir = vect_prod(b->cam.dirup, b->cam.dirright);
 	if (ev == SDLK_DOWN)
-		b->cam.dirup = vect_rotate_xy(b->cam.dirup, -angle);
+		b->cam.dirup = vect_rotate(b->cam.dirup, -angle, init_vect(1.0, 0.0, 0.0));
 	else if (ev == SDLK_UP)
-		b->cam.dirup = vect_rotate_xy(b->cam.dirup, angle);
+		b->cam.dirup = vect_rotate(b->cam.dirup, angle, init_vect(1.0, 0.0, 0.0));
 	else if (ev == SDLK_RIGHT)
-		b->cam.dirright = vect_rotate_xy(b->cam.dirright, angle);
+		b->cam.dirright = vect_rotate(b->cam.dirright, angle, init_vect(0.0, 0.0, 1.0));
 	else if (ev == SDLK_LEFT)
-		b->cam.dirright = vect_rotate_xy(b->cam.dirright, -angle);
+		b->cam.dirright = vect_rotate(b->cam.dirright, -angle, init_vect(0.0, 0.0, 1.0));
 	b->cam.dir = vect_prod(b->cam.dirup, b->cam.dirright);
 }
 
@@ -84,9 +86,9 @@ t_v		ev_move(t_v v, int ev)
 		tmp.x = v.x - 0.06;
 	else if (ev == SDLK_d)
 		tmp.x = v.x + 0.06;
-	else if (ev == SDLK_KP_MINUS)
-		tmp.z = v.z - 0.06;
 	else if (ev == SDLK_KP_PLUS)
+		tmp.z = v.z - 0.06;
+	else if (ev == SDLK_KP_MINUS)
 		tmp.z = v.z + 0.06;
 	return (tmp);
 }

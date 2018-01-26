@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 15:45:48 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 17:04:46 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,6 +220,15 @@ typedef struct				s_inter
 }							t_inter;
 
 /*
+** Struct for a 3x3 matrice
+*/
+
+typedef struct				s_matrice
+{
+	double					data[3][3];
+}							t_matrice;
+
+/*
 ** The base struct, containing all we need to create life
 */
 
@@ -256,6 +265,7 @@ t_col						init_col(double r, double g, double b);
 t_plane						init_plane(double a, double b, double c, double d, t_col col);
 t_tex						init_tex();
 void						init_inter(t_inter *inter);
+t_matrice					init_matrice();
 
 /*
 **	Errors								| error.c
@@ -312,7 +322,7 @@ double						vect_norme(t_v v);
 double						vect_norme2(t_v v);
 void						vect_print(t_v v);
 void						vect_normalize(t_v *v);
-t_v							vect_rotate_xy(t_v v, double angle);
+t_v							vect_rotate(t_v v, double angle, t_v axe);
 t_v							vect_init(double x, double y, double z);
 
 /*
@@ -386,7 +396,15 @@ void						scene3(t_b *b);
 void						scene4(t_b *b);
 void						scene5(t_b *b);
 
+/*
+** Matrice calculations functions
+*/
 
+t_matrice					matrice_add(t_matrice a, t_matrice b);
+t_matrice					matrice_sub(t_matrice a, t_matrice b);
+t_matrice					matrice_mult(t_matrice a, t_matrice b);
+t_matrice					matrice_multnb(t_matrice a, double nb);
+t_v							matrice_multvect(t_matrice m, t_v v);
 
 
 
