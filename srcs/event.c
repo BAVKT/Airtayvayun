@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 18:14:26 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 18:25:45 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ int		event(t_b *b)
 		ev = event.key.keysym.sym;
 		ft_putstr("k = ");
 			ft_putnbrendl(ev);
+		ft_putstr("r = ");
+			ft_putnbrendl(SDLK_r);
 		if (event.type == SDL_QUIT)
 			return (0);
 		else if (ev == SDLK_DOWN | ev == SDLK_UP | ev == SDLK_LEFT | ev == SDLK_RIGHT)
@@ -34,10 +36,26 @@ int		event(t_b *b)
 			b->cam.pos = ev_move(b->cam.pos, ev);
 		else if (ev == SDLK_3 || ev == SDLK_4)
 			ev_qualitat(b, ev);
-
+		else if (ev == SDLK_r)
+			ev_reset(b);
 	}
 	return (1);
 }
+
+/*
+** Return to basic values
+*/
+
+void	ev_reset(t_b *b)
+{
+			ft_putendlcolor("ev_reset();", MAGENTA);
+	init_cam(&b->cam);
+	b->aliasing = 4;
+}
+
+/*
+** Event to change the qualitat
+*/
 
 void	ev_qualitat(t_b *b, int ev)
 {
