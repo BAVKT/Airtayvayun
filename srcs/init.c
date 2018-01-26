@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/19 18:06:32 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 16:01:40 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	init_cam(t_cam *cam)
 	cam->angle = 60 * M_PI / 180;
 	cam->pos = init_vect(0, 0, -1);
 	cam->dir = init_vect(0, 0, 1);
-	cam->dirup =init_vect(0, 1, 0);
+	cam->dirup = init_vect(0, 1, 0);
 	cam->dirright = init_vect(1, 0, 0);
 	cam->dirright = vect_prod(cam->dir, cam->dirup);
 }
@@ -119,11 +119,11 @@ t_sph	init_sph(t_v v, t_col col)
 
 	sph.r = 1;
 	sph.center = v;
-	sph.color = col;
 	sph.next = NULL;
 	sph.tex = init_tex();
 	sph.tex.ks = init_col(1.0, 1.0, 1.0);
 	sph.tex.kd = init_col(1.0, 1.0, 1.0);
+	sph.tex.col = col;
 	return (sph);
 }
 
@@ -148,7 +148,7 @@ t_lux	init_lux(t_v pos)
 ** Init for the plane
 */
 
-t_plane		init_plane(double a, double b, double c, double d)
+t_plane		init_plane(double a, double b, double c, double d, t_col col)
 {
             ft_putendlcolor("init_plane();", MAGENTA);
 	t_plane plane;
@@ -159,6 +159,7 @@ t_plane		init_plane(double a, double b, double c, double d)
 	plane.d = d;
 	plane.next = NULL;
 	plane.tex = init_tex();
+	plane.tex.col = col;
 	return (plane);
 }
 
@@ -174,7 +175,7 @@ t_plane		init_plane2(t_v ori, t_v h, t_v w)
 
 	n = vect_prod(w, h);
 	vect_normalize(&n);
-	p = init_plane(n.x, n.y, n.z, -vect_dot(n, ori));
+	p = init_plane(n.x, n.y, n.z, -vect_dot(n, ori), init_col(1.0, 1.0, 1.0));
 	return (p);
 }
 

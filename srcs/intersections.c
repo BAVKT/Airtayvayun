@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/19 17:49:31 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/19 18:06:34 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 16:00:02 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,10 @@ t_inter		*inter_obj(t_b *b, t_ray *ray)
 		b->inter->tex = plane->tex;
 		dest = vect_add(ray->ori, vect_multnb(&ray->dir, ray->t));
 		// printf("dest = x=%f y=%f z=%f\n", dest.x, dest.y, dest.z);
-		if (fabs(dest.x - (double)((int)(dest.x))) < 0.05)
-			b->inter->tex.col = init_col(1.0, 0.0, 0.0);
-		else if (fabs(dest.z - (double)((int)(dest.z))) < 0.1)
-			b->inter->tex.col = init_col(1.0, 0.0, 0.0);
+		// if (fabs(dest.x - (double)((int)(dest.x))) < 0.05)
+		// 	b->inter->tex.col = init_col(1.0, 0.0, 0.0);
+		// else if (fabs(dest.z - (double)((int)(dest.z))) < 0.1)
+		// 	b->inter->tex.col = init_col(1.0, 0.0, 0.0);
 		//b->inter->to_cam ?
 		return (b->inter);
 	}

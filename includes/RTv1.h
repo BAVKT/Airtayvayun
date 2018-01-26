@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/19 18:06:35 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 15:45:48 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,7 +253,7 @@ t_vl						init_vectl(double x, double y, double z);
 t_lux						init_lux(t_v pos);
 t_sph						init_sph(t_v v, t_col color);
 t_col						init_col(double r, double g, double b);
-t_plane						init_plane(double a, double b, double c, double d);
+t_plane						init_plane(double a, double b, double c, double d, t_col col);
 t_tex						init_tex();
 void						init_inter(t_inter *inter);
 
@@ -376,7 +376,15 @@ void						parse_mtl(char *s);
 int							ft_isnum(char *str);
 char						*ft_implode(char **tab, char c);
 
+/*
+** The differents scenes
+*/
 
+void						scene1(t_b *b);
+void						scene2(t_b *b);
+void						scene3(t_b *b);
+void						scene4(t_b *b);
+void						scene5(t_b *b);
 
 
 
