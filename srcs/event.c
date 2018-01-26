@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 17:07:14 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 18:14:26 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,19 @@ int		event(t_b *b)
 			ev_rotate_xy(b, ev);
 		else if (ev == SDLK_w || ev == SDLK_a || ev == SDLK_s || ev == SDLK_d || ev == SDLK_KP_MINUS || ev == SDLK_KP_PLUS)
 			b->cam.pos = ev_move(b->cam.pos, ev);
+		else if (ev == SDLK_3 || ev == SDLK_4)
+			ev_qualitat(b, ev);
+
 	}
 	return (1);
+}
+
+void	ev_qualitat(t_b *b, int ev)
+{
+	if (ev == SDLK_3 && b->aliasing > 2)
+		b->aliasing -= 2;
+	else if (ev == SDLK_4 && b->aliasing < 100)
+		b->aliasing += 2;
 }
 
 /*

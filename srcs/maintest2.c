@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 17:53:59 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 18:14:06 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,19 +84,19 @@ void	draw(t_b *b)
 			*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = col2int(col);
 			SDL_UnlockSurface(b->img);
 			i = 0;
-			while (++i < ALIASING)
+			while (++i < b->aliasing)
 			{
 				j = 0;
-				while (++j < ALIASING)
+				while (++j < b->aliasing)
 				{
 					SDL_LockSurface(b->img);
 					*((unsigned int *)b->img->pixels + b->winx * (px.y + j) + px.x + i) = col2int(col);
 					SDL_UnlockSurface(b->img);
 				}
 			}
-			px.y += ALIASING - 1;
+			px.y += b->aliasing - 1;
 		}
-		px.x += ALIASING - 1;
+		px.x += b->aliasing - 1;
 	}
 	SDL_UpdateWindowSurface(b->win);
 }

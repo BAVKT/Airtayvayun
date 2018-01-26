@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 17:54:13 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 18:13:03 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include <math.h>
 # include <limits.h>
 # define MAX_DEEP 1
-# define ALIASING 16
 					#include <stdio.h>
 /*
 ** struct for a basic vector
@@ -239,6 +238,7 @@ typedef struct				s_b
 	int						winx;
 	int						winy;
 	int						maxid;
+	int						aliasing;
 	t_pars					pars;
 	t_cam					cam;
 	t_vp					vp;
@@ -297,6 +297,8 @@ t_v							ray2vect(t_ray ray);
 int							event();
 t_v							ev_move(t_v v, int ev);
 void						ev_rotate_xy(t_b *b, int ev);
+void						ev_qualitat(t_b *b, int ev);
+
 
 /*
 **	Basic math between vectors			| vect_valc1.c
