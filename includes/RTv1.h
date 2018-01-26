@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 17:04:46 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 17:54:13 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <math.h>
 # include <limits.h>
 # define MAX_DEEP 1
+# define ALIASING 16
 					#include <stdio.h>
 /*
 ** struct for a basic vector

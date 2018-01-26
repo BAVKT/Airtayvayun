@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 15:45:52 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 17:53:59 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,14 @@ void	draw(t_b *b)
 	t_lux		*lux;
 	t_px		px;
 	t_col		col;
+	int			i;
+	int			j;
 
-	px.x = -1;
-	while (++px.x < b->winx)
+	px.x = 0;
+	while (px.x < b->winx)
 	{
-		px.y = -1;
-		while (++px.y < b->winy)
+		px.y = 0;
+		while (px.y < b->winy)
 		{
 			ray.ori = b->cam.pos;
 			ray.dir = vect_sub(draw_pixelvp(b, px), b->cam.pos);
@@ -75,13 +77,26 @@ void	draw(t_b *b)
 					lux = lux->next;
 				}
 				color_sat(&col);
-				SDL_LockSurface(b->img);
-				*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = col2int(col);
-				SDL_UnlockSurface(b->img);
 			}
 			else
-				*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = 0;
+				col = init_col(0.0, 0.0, 0.0);
+			SDL_LockSurface(b->img);
+			*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = col2int(col);
+			SDL_UnlockSurface(b->img);
+			i = 0;
+			while (++i < ALIASING)
+			{
+				j = 0;
+				while (++j < ALIASING)
+				{
+					SDL_LockSurface(b->img);
+					*((unsigned int *)b->img->pixels + b->winx * (px.y + j) + px.x + i) = col2int(col);
+					SDL_UnlockSurface(b->img);
+				}
+			}
+			px.y += ALIASING - 1;
 		}
+		px.x += ALIASING - 1;
 	}
 	SDL_UpdateWindowSurface(b->win);
 }

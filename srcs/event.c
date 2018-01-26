@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 17:05:36 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 17:07:14 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ void	ev_rotate_xy(t_b *b, int ev)
 	double	angle;
 
 	angle = 10.0 * M_PI / 180.0;
-	printf("angle = %f", angle);
 
 	// if (ev == SDLK_DOWN)
 	// 	b->cam.dirup = vect_rotate_xy(b->cam.dirup, -angle);
