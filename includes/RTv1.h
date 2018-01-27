@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 18:13:03 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/26 21:55:22 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,9 +295,10 @@ t_v							ray2vect(t_ray ray);
 */
 
 int							event();
-t_v							ev_move(t_v v, int ev);
+t_v							ev_move(t_b *b, int ev);
 void						ev_rotate_xy(t_b *b, int ev);
 void						ev_qualitat(t_b *b, int ev);
+void						ev_reset(t_b *b);
 
 
 /*
@@ -409,6 +410,13 @@ t_matrice					matrice_mult(t_matrice a, t_matrice b);
 t_matrice					matrice_multnb(t_matrice a, double nb);
 t_v							matrice_multvect(t_matrice m, t_v v);
 
+/*
+** Cam refreshing
+*/
+
+void						refresh_dir(t_cam *cam, t_v v);
+void						refresh_dirup(t_cam *cam, t_v v);
+void						refresh_dirright(t_cam *cam, t_v v);
 
 
 
