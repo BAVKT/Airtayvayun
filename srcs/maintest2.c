@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 18:21:28 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/27 16:23:22 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,21 +72,19 @@ void	draw(t_b *b)
 						calc_spe(lux, *b->inter, vect_multnb(&ray.dir, -1));
 						col = color_add(col, lux->lum_dif);
 					}
-					// if (px.y == 0)
-					// 	print_col(col);
 					lux = lux->next;
 				}
 				color_sat(&col);
 			}
 			else
 				col = init_col(0.0, 0.0, 0.0);
-			SDL_LockSurface(b->img);
-			*((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = col2int(col);
-			SDL_UnlockSurface(b->img);
-			i = 0;
+			// SDL_LockSurface(b->img);
+			// *((unsigned int *)b->img->pixels + b->winx * px.y + px.x) = col2int(col);
+			// SDL_UnlockSurface(b->img);
+			i = -1;
 			while (++i < b->aliasing)
 			{
-				j = 0;
+				j = -1;
 				while (++j < b->aliasing)
 				{
 					SDL_LockSurface(b->img);
@@ -94,9 +92,9 @@ void	draw(t_b *b)
 					SDL_UnlockSurface(b->img);
 				}
 			}
-			px.y += b->aliasing - 1;
+			px.y += b->aliasing;
 		}
-		px.x += b->aliasing - 1;
+		px.x += b->aliasing;
 	}
 	SDL_UpdateWindowSurface(b->win);
 }

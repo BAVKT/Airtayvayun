@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/26 14:22:46 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 18:07:05 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/27 17:39:50 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	scene1(t_b *b)
 {
-	add_lux(b, init_lux(init_vect(0.0, 0.0, 0.0)));
+	add_lux(b, init_lux(init_vect(0.0, 0.0, 15.0)));
 	add_sphere(b, init_sph(init_vect(0, 0, 10), init_col(1.0, 1.0, 1.0)));
 	add_plane(b, init_plane(0.0, 1.0, 0.0, 3.0, init_col(1.0, 0.0, 0.0)));
 }
@@ -40,7 +40,7 @@ void	scene2(t_b *b)
 	add_plane(b, init_plane(0.0, 0.0, 1.0, -15.0, init_col(0.4, 0.0, 0.0)));
 	//Mur de droite
 	add_plane(b, init_plane(1.0, 0.0, 0.0, 15.0, init_col(0.4, 0.0, 0.0)));
-	//Mur droit
+	//Mur
 	add_plane(b, init_plane(1.0, 0.0, 0.0, -15.0, init_col(0.4, 0.0, 0.0)));
 	//Mur gauche jaune
 	add_plane(b, init_plane(0.0, 1.0, 0.0, 15.0, init_col(0.4, 0.0, 0.0)));
@@ -63,6 +63,9 @@ void	scene4(t_b *b)
 	add_lux(b, init_lux(init_vect(0.0, 0.0, 25.0)));
 	add_sphere(b, init_sph(init_vect(0, 0, 10), init_col(1.0, 1.0, 1.0)));
 	add_plane(b, init_plane(0.0, 1.0, 0.0, 3.0, init_col(1.0, 0.0, 0.0)));
+	add_plane(b, init_plane(0.0, 0.0, 1.0, -15.0, init_col(0.4, 0.0, 0.0)));
+	add_plane(b, init_plane(1.0, 0.0, 0.0, 5.0, init_col(0.4, 0.0, 0.0)));
+	add_plane(b, init_plane(1.0, 0.0, 0.0, -5.0, init_col(0.4, 0.0, 0.0)));
 }
 
 void	scene5(t_b *b)

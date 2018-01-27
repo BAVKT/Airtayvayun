@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 18:25:45 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/27 17:42:26 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@ int		event(t_b *b)
 			ft_putnbrendl(ev);
 		ft_putstr("r = ");
 			ft_putnbrendl(SDLK_r);
-		if (event.type == SDL_QUIT)
+		if (event.type == SDL_QUIT || ev == SDLK_ESCAPE)
 			return (0);
 		else if (ev == SDLK_DOWN | ev == SDLK_UP | ev == SDLK_LEFT | ev == SDLK_RIGHT)
 			ev_rotate_xy(b, ev);
 		else if (ev == SDLK_w || ev == SDLK_a || ev == SDLK_s || ev == SDLK_d || ev == SDLK_KP_MINUS || ev == SDLK_KP_PLUS)
-			b->cam.pos = ev_move(b->cam.pos, ev);
+			b->cam.pos = ev_move(b , ev);
 		else if (ev == SDLK_3 || ev == SDLK_4)
 			ev_qualitat(b, ev);
 		else if (ev == SDLK_r)
@@ -59,10 +59,10 @@ void	ev_reset(t_b *b)
 
 void	ev_qualitat(t_b *b, int ev)
 {
-	if (ev == SDLK_3 && b->aliasing > 2)
-		b->aliasing -= 2;
+	if (ev == SDLK_3 && b->aliasing > 1)
+		b->aliasing -= 1;
 	else if (ev == SDLK_4 && b->aliasing < 100)
-		b->aliasing += 2;
+		b->aliasing += 1;
 }
 
 /*
@@ -74,7 +74,7 @@ void	ev_rotate_xy(t_b *b, int ev)
 			ft_putendlcolor("ev_rotate_xy();", MAGENTA);
 	double	angle;
 
-	angle = 10.0 * M_PI / 180.0;
+	angle = 3.0 * M_PI / 180.0;
 
 	// if (ev == SDLK_DOWN)
 	// 	b->cam.dirup = vect_rotate_xy(b->cam.dirup, -angle);
@@ -86,37 +86,53 @@ void	ev_rotate_xy(t_b *b, int ev)
 	// 	b->cam.dirright = vect_rotate_xy(b->cam.dirright, -angle);
 	// b->cam.dir = vect_prod(b->cam.dirup, b->cam.dirright);
 	if (ev == SDLK_DOWN)
-		b->cam.dirup = vect_rotate(b->cam.dirup, -angle, init_vect(1.0, 0.0, 0.0));
+	{
+		b->cam.dir = vect_rotate(b->cam.dir, -angle, b->cam.dirright);
+		b->cam.dirup = vect_rotate(b->cam.dirup, -angle, b->cam.dirright);
+		// b->cam.dirright = vect_prod(b->cam.dir, b->cam.dirup);
+	}
 	else if (ev == SDLK_UP)
-		b->cam.dirup = vect_rotate(b->cam.dirup, angle, init_vect(1.0, 0.0, 0.0));
+	{
+		b->cam.dir = vect_rotate(b->cam.dir, angle, b->cam.dirright);
+		b->cam.dirup = vect_rotate(b->cam.dirup, angle, b->cam.dirright);
+		// b->cam.dirright = vect_prod(b->cam.dir, b->cam.dirup);
+	}
 	else if (ev == SDLK_RIGHT)
-		b->cam.dirright = vect_rotate(b->cam.dirright, angle, init_vect(0.0, 0.0, 1.0));
+	{
+		b->cam.dir = vect_rotate(b->cam.dir, angle, b->cam.dirup);
+		b->cam.dirright = vect_rotate(b->cam.dirup, angle, b->cam.dirup);
+		// b->cam.dirup = vect_prod(b->cam.dirright, b->cam.dir);
+	}
 	else if (ev == SDLK_LEFT)
-		b->cam.dirright = vect_rotate(b->cam.dirright, -angle, init_vect(0.0, 0.0, 1.0));
-	b->cam.dir = vect_prod(b->cam.dirup, b->cam.dirright);
+	{
+		b->cam.dir = vect_rotate(b->cam.dir, -angle, b->cam.dirup);
+		b->cam.dirright = vect_rotate(b->cam.dirup, -angle, b->cam.dirup);
+		// b->cam.dirup = vect_prod(b->cam.dirright, b->cam.dir);
+	}
+	// b->cam.dir = vect_prod(b->cam.dirup, b->cam.dirright);
 }
 
 /*
 ** Moving keys : up | down | right | left
 */
 
-t_v		ev_move(t_v v, int ev)
+t_v		ev_move(t_b *b, int ev)
 {
 			ft_putendlcolor("ev_move();", MAGENTA);
 	t_v tmp;
 
-	tmp = v;
+	tmp = b->cam.pos;
 	if (ev == SDLK_w)
-		tmp.y = v.y + 0.06;
+		tmp.y = b->cam.pos.y + 0.06;
 	else if (ev == SDLK_s)
-		tmp.y = v.y - 0.06;
+		tmp.y = b->cam.pos.y - 0.06;
 	else if (ev == SDLK_a)
-		tmp.x = v.x - 0.06;
+		tmp.x = b->cam.pos.x - 0.06;
 	else if (ev == SDLK_d)
-		tmp.x = v.x + 0.06;
+		tmp.x = b->cam.pos.x + 0.06;
 	else if (ev == SDLK_KP_PLUS)
-		tmp.z = v.z - 0.06;
+		tmp = vect_add(b->cam.pos, vect_multnb(&b->cam.dir, 0.1));
 	else if (ev == SDLK_KP_MINUS)
-		tmp.z = v.z + 0.06;
+		tmp = vect_sub(b->cam.pos, vect_multnb(&b->cam.dir, 0.1));
 	return (tmp);
 }
