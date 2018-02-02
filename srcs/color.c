@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/19 16:58:03 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/12/20 17:30:14 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/01/30 16:47:12 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,28 @@ t_col		color_multnb(t_col col, double nb)
 
 void		color_sat(t_col *col)
 {
+	// double	max;
+
+	// max = (col->r > col->b) ? col->r : col->b;
+	// max = (max > col->g) ? max : col->g;
+	// if (max == 0)
+	// {
+	// 	col->r = 0;
+	// 	col->g = 0;
+	// 	col->b = 0;
+	// }
+	// else
+	// {
+	// 	col->r /= max;
+	// 	col->g /= max;
+	// 	col->b /= max;
+	// }
+	// if (col->r < 0.0)
+	// 	col->r = 0.0;
+	// if (col->g < 0.0)
+	// 	col->g = 0.0;
+	// if (col->b < 0.0)
+	// 	col->b = 0.0;
 	if (col->r > 1.0)
 		col->r = 1.0;
 	else if (col->r < 0.0)
@@ -72,6 +94,7 @@ void		color_sat(t_col *col)
 		col->b = 1.0;
 	else if (col->b < 0.0)
 		col->b = 0.0;
+
 }
 
 /*

@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/19 18:06:35 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/02 21:24:57 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,13 @@
 # include <math.h>
 # include <limits.h>
 # define MAX_DEEP 1
+# define DEG2RAD(x) (x * M_PI / 180.0)
 					#include <stdio.h>
+
+
+
+//Specular entre le rayon envoyé et le rayon de la lumiere et on blanchi le pixel
+
 /*
 ** struct for a basic vector
 */
@@ -35,10 +41,9 @@ typedef struct				s_v
 
 typedef struct				s_vl
 {
-	double					x;
-	double					y;
-	double					z;
-	struct s_v				*next;
+	t_v						v;
+	int						id;
+	struct s_vl				*next;
 }							t_vl;
 
 /*
@@ -72,35 +77,6 @@ typedef struct				s_tex
 }							t_tex;
 
 /*
-** Struct for the camera
-*/
-
-typedef struct				s_cam
-{
-	int						angle;
-	t_v						pos;
-	t_v						dir;
-	t_v						dirup;
-	t_v						dirright;
-	int						id;
-	struct s_cam			*next;
-}							t_cam;
-
-/*
-** Spherical sphere struct
-*/
-
-typedef struct				s_sph
-{
-	double					r;
-	t_v						center;
-	t_col					color;
-	t_tex					tex;
-	int						id;
-	struct s_sph			*next;
-}							t_sph;
-
-/*
 ** Ray struct
 */
 
@@ -117,29 +93,12 @@ typedef struct				s_ray
 
 typedef struct				s_px
 {
+	int						id;
 	int						x;
 	int						y;
-	t_col		 			color;
+	t_col		 			col;
+	double					dist;
 }							t_px;
-
-/*
-** Light struct
-*/
-
-typedef	struct				s_lux
-{
-	double					atn;		//Attenuation
-	t_v						ori;		//origine
-	t_v						light;		//vecteur vers la lumiere
-	t_col					dif;		//intensite de la lumiere diffuse
-	t_col					spe;		//intensite lumiere speculaire
-	t_col 					lum_amb;	//luminosite ambiante
-	t_col					lum_dif;	//luminosite de la lumiere diffuse
-	t_col					lum_spe;	//luminosite lum speculaire
-	t_col					col;		//Couleur
-	int						id;
-	struct s_lux			*next;
-}							t_lux;
 
 /*
 ** Struct view plane | width/heigth/distance
@@ -156,19 +115,62 @@ typedef	struct				s_vp
 }							t_vp;
 
 /*
-** Plane struct	| Contain the abcd for the plane equation
+** Light struct
 */
 
-typedef struct				s_plane
+typedef	struct				s_lux
 {
+	double					atn;		//Attenuation
+	double					amp_cst;	//Amplitude constante
+	double					amp_lin;	//Amplitude lineaire
+	double					amp_quad;	//Amplitude quadratique
+	t_v						ori;		//origine
+	t_v						light;		//vecteur vers la lumiere
+	t_col					dif;		//intensite de la lumiere diffuse
+	t_col					spe;		//intensite lumiere speculaire
+	t_col 					lum_amb;	//luminosite ambiante
+	t_col					lum_dif;	//luminosite de la lumiere diffuse
+	t_col					lum_spe;	//luminosite lum speculaire
+	t_col					col;		//Couleur
+	int						id;
+	struct s_lux			*next;
+}							t_lux;
+
+/*
+** Struct for the camera
+*/
+
+typedef struct				s_cam
+{
+	int						angle;
+	t_v						pos;
+	t_v						dir;
+	t_v						dirup;
+	t_v						dirright;
+	int						id;
+	struct s_cam			*next;
+}							t_cam;
+
+/*
+** Obj struct containing every kind of object
+*/
+
+typedef	struct				s_obj
+{
+	int						form;	//1 = plan, 2 = sph, 3 = cyl, 4 = cone
+	int						id;
 	double					a;
 	double					b;
 	double					c;
 	double					d;
-	int						id;
+	double					r;
+	double					angle;
+	t_v						h;
+	t_v						ori;
 	t_tex					tex;
-	struct s_plane			*next;
-}							t_plane;
+	t_col					col;
+	struct s_obj			*next;
+}							t_obj;
 
 /*
 ** Sommet d'une face
@@ -216,8 +218,32 @@ typedef struct				s_inter
 	t_ray					to_lux;
 	t_tex					tex;
 	t_v						n;
+	int						id;
 	double					min;
 }							t_inter;
+
+/*
+** Action struct
+*/
+
+typedef struct				s_act
+{
+	int						action;		//1 pour ellipse
+	double					speed;		//vitesse de l'action
+	double					dist;
+	double					angle;
+	t_obj					*obj1;
+	t_obj					*obj2;
+}							t_act;
+
+/*
+** Struct for a 3x3 matrice
+*/
+
+typedef struct				s_matrice
+{
+	double					data[3][3];
+}							t_matrice;
 
 /*
 ** The base struct, containing all we need to create life
@@ -229,14 +255,16 @@ typedef struct				s_b
 	int						winx;
 	int						winy;
 	int						maxid;
+	int						aliasing;
+	t_px					**tab_px;
+	t_vl					*vl;			//Liste du centre des objets
 	t_pars					pars;
 	t_cam					cam;
 	t_vp					vp;
-	t_sph					*sph;
-	t_plane					*plane;
+	t_obj					*obj;
 	t_lux					*lux;
 	t_col					amb;		//intensité ambiante
-	t_inter					*inter;
+	t_inter					inter;
 	SDL_Window				*win;
 	SDL_Surface				*img;
 }							t_b;
@@ -249,13 +277,17 @@ void						init_b(t_b *b);
 void						init_vp(t_b *b);
 void						init_cam(t_cam *cam);
 t_v							init_vect(double x, double y, double z);
-t_vl						init_vectl(double x, double y, double z);
+t_vl						init_vl(t_v v, int id);
 t_lux						init_lux(t_v pos);
-t_sph						init_sph(t_v v, t_col color);
+t_obj						init_sph(t_v v, t_col color);
 t_col						init_col(double r, double g, double b);
-t_plane						init_plane(double a, double b, double c, double d);
+t_obj						init_plane(double a, double b, double c, double d, t_col col);
 t_tex						init_tex();
 void						init_inter(t_inter *inter);
+t_matrice					init_matrice();
+t_obj						init_cone(t_v v, t_col col, t_v h);
+t_obj						init_cyl(t_v v, t_col col, t_v h, double r);
+t_act						init_act(t_obj *obj1, t_obj *obj2, int action);
 
 /*
 **	Errors								| error.c
@@ -278,14 +310,20 @@ void						ray(t_b *b);
 
 t_v							draw_pixelvp(t_b *b, t_px px);
 t_v							ray2vect(t_ray ray);
+double						solve_equation(double min, double a, double b, double c);
 
 /*
 ** Catch the events						| event.c
 */
 
 int							event();
-t_v							ev_move(t_v v, int ev);
+void						ev_move_cam(t_b *b, int ev);
+void						ev_move_obj(t_b *b, int ev);
 void						ev_rotate_xy(t_b *b, int ev);
+void						ev_qualitat(t_b *b, int ev);
+void						ev_reset(t_b *b);
+void						ev_mouse(t_b *b);
+
 
 /*
 **	Basic math between vectors			| vect_valc1.c
@@ -312,8 +350,15 @@ double						vect_norme(t_v v);
 double						vect_norme2(t_v v);
 void						vect_print(t_v v);
 void						vect_normalize(t_v *v);
-t_v							vect_rotate_xy(t_v v, double angle);
+t_v							vect_rotate(t_v v, double angle, t_v axe);
 t_v							vect_init(double x, double y, double z);
+
+/*
+** Vector list actions					| vector.c
+*/
+
+t_vl						*add_vl(t_b *b, t_vl vl);
+t_vl						*search_vl(t_b *b, int id);
 
 /*
 ** Utilitaries for color				| color.c
@@ -331,25 +376,25 @@ void						print_col(t_col col);
 ** Intercept for objs 					| intersection.c
 */
 
-int							inter_sphere(t_b *b, t_ray *ray);
-int							inter_plane(t_b *b, t_ray *ray);
-t_inter						*inter_obj(t_b *b, t_ray *ray);
+double						inter_obj(t_b *b, t_ray *ray);
+double						inter_obj_lux(t_b *b, t_ray *ray);
+int							inter_all(t_b *b, t_ray *ray, double min);
 
 /*
-** Sphere								| sphere.c
+** Calculation for the differents obj	| calc_obj.c
 */
 
-double						calc_sphere(t_ray *ray, t_sph sph);
-t_sph						*add_sphere(t_b *b, t_sph sph);
-t_sph						*search_sphere(t_b *b, int id);
+double						calc_sphere(t_ray *ray, t_obj sph, double min);
+double						calc_plane(t_ray *ray, t_obj plane, double min);
+double						calc_cone(t_ray *ray, t_obj cone, double min);
+double						calc_cyl(t_ray *ray, t_obj cyl, double min);
 
 /*
-**	Plane								| plane.c
+** Interact with obj list				| obj.c
 */
 
-double						calc_plane(t_ray *ray, t_plane plane);
-t_plane						*add_plane(t_b *b, t_plane plane);
-t_plane						*search_plane(t_b *b, int id);
+t_obj						*add_obj(t_b *b, t_obj obj);
+t_obj						*search_obj(t_b *b, int id);
 
 /*
 ** Lux									| lux.c
@@ -357,13 +402,14 @@ t_plane						*search_plane(t_b *b, int id);
 
 t_col						calc_amb(t_b *b);
 void						calc_dif(t_lux *lux, t_inter inter);
-void						calc_spe(t_lux *lux, t_inter inter, t_v eye);
+void						calc_spe(t_lux *lux, t_inter inter, t_v to_eye);
 t_lux						*add_lux(t_b *b, t_lux lux);
 t_lux						*search_lux(t_b *b, int id);
 
 /*
 ** Obj parsing							| parseur.c
 */
+
 void						parse_error(int e, char *s);
 void						parse_main(t_b *b, char *av);
 void						parse_redirect(t_pars *pars, char *s);
@@ -375,6 +421,43 @@ void						check_f(char **tab);
 void						parse_mtl(char *s);
 int							ft_isnum(char *str);
 char						*ft_implode(char **tab, char c);
+
+/*
+** The differents scenes
+*/
+
+void						scene1(t_b *b);
+void						scene2(t_b *b);
+void						scene3(t_b *b);
+void						scene4(t_b *b);
+void						scene5(t_b *b);
+void						scene6(t_b *b);
+
+/*
+** Matrice calculations functions
+*/
+
+t_matrice					matrice_add(t_matrice a, t_matrice b);
+t_matrice					matrice_sub(t_matrice a, t_matrice b);
+t_matrice					matrice_mult(t_matrice a, t_matrice b);
+t_matrice					matrice_multnb(t_matrice a, double nb);
+t_v							matrice_multvect(t_matrice m, t_v v);
+
+/*
+** Cam refreshing
+*/
+
+void						refresh_dir(t_cam *cam, t_v v);
+void						refresh_dirup(t_cam *cam, t_v v);
+void						refresh_dirright(t_cam *cam, t_v v);
+
+
+/*
+** To create a FDF map of the actual scene
+*/
+
+void						to_fdf(t_b *b, char *name);
+
 
 
 

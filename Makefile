@@ -6,14 +6,15 @@
 #    By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/09/27 17:07:31 by vmercadi          #+#    #+#              #
-#    Updated: 2018/01/19 18:06:36 by vmercadi         ###   ########.fr        #
+#    Updated: 2018/02/02 21:23:50 by vmercadi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = RTv1
 SRC = srcs/maintest2.c srcs/error.c srcs/event.c srcs/vect_calc1.c \
 	srcs/vect_calc2.c srcs/vect_utils.c srcs/utils.c srcs/init.c \
-	srcs/sphere.c srcs/intersections.c srcs/color.c srcs/plane.c srcs/lux.c \
+	srcs/intersections.c srcs/color.c srcs/lux.c srcs/scene.c srcs/matrice.c \
+	srcs/cam.c srcs/vector.c srcs/to_fdf.c srcs/obj.c srcs/calc_obj.c
 
 INCLUDES = -I includes -I libft -I lib/SDL2/Headers
 CFLAGS = -Wall -Wextra -Werror $(INCLUDES)

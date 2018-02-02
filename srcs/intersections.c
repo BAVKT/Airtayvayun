@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/19 17:49:31 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/19 18:06:34 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/02 21:40:06 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,90 +16,102 @@
 ** Chekc intersction of all the objects of the world and the universe and clement
 */
 
-t_inter		*inter_obj(t_b *b, t_ray *ray)
+double	inter_obj(t_b *b, t_ray *ray)
 {
 			// ft_putendlcolor("inter_obj();", MAGENTA);
-	int		id;
-	t_sph	*sph;
-	t_plane	*plane;
+	t_obj	*obj;
 	t_v		dest;
+	int		id;
 
-	if (!b->inter)
-		b->inter = (t_inter *)malloc(sizeof(t_inter));
-	b->inter->min = b->max;
-	if ((id = inter_sphere(b, ray)) > 0)
+	ray->t = b->max;
+	//Sphere
+	if ((id = inter_all(b, ray, 1.0)) > 0)
 	{
-		sph = search_sphere(b, id);
-		ray->t = b->inter->min;
-		b->inter->n = vect_sub(sph->center, ray2vect(*ray));
-		b->inter->tex = sph->tex;
-		//b->inter->to_cam ?
-		return (b->inter);
+		b->inter.id = id;
+		obj = search_obj(b, b->inter.id);
+		// if (!obj->islux)
+		// {
+			b->inter.n = vect_sub(ray2vect(*ray), obj->ori);
+			if (vect_dot(b->inter.n, ray->dir) > 0.0)
+				b->inter.n = vect_multnb(&b->inter.n, -1);
+			b->inter.tex = obj->tex;
+		// }
 	}
-	else if ((id = inter_plane(b, ray)) > 0)
+	//Plan
+	if ((id = inter_all(b, ray, 1.0)) > 0)
 	{
-		plane = search_plane(b, id);
-		ray->t = b->inter->min;
-		b->inter->n = init_vect(plane->a, plane->b, plane->c);
-		b->inter->tex = plane->tex;
+		b->inter.id = id;
+		obj = search_obj(b, b->inter.id);
+		b->inter.n = init_vect(obj->a, obj->b, obj->c);
+		if (vect_dot(b->inter.n, ray->dir) > 0.0)
+			b->inter.n = vect_multnb(&b->inter.n, -1);
+		b->inter.tex = obj->tex;
 		dest = vect_add(ray->ori, vect_multnb(&ray->dir, ray->t));
-		// printf("dest = x=%f y=%f z=%f\n", dest.x, dest.y, dest.z);
-		if (fabs(dest.x - (double)((int)(dest.x))) < 0.05)
-			b->inter->tex.col = init_col(1.0, 0.0, 0.0);
-		else if (fabs(dest.z - (double)((int)(dest.z))) < 0.1)
-			b->inter->tex.col = init_col(1.0, 0.0, 0.0);
-		//b->inter->to_cam ?
-		return (b->inter);
 	}
-	return (NULL);
+	//Cylindre
+	if ((id = inter_all(b, ray, 1.0)) > 0)
+	{
+		b->inter.id = id;
+		obj = search_obj(b, b->inter.id);
+		dest = vect_multnb(&obj->h, vect_dot(ray2vect(*ray), obj->h) / vect_norme2(obj->h));
+		b->inter.n = vect_sub(vect_sub(ray2vect(*ray), obj->ori), dest);
+		if (vect_dot(b->inter.n, ray->dir) > 0.0)
+			b->inter.n = vect_multnb(&b->inter.n, -1);
+		b->inter.tex = obj->tex;
+		dest = vect_add(ray->ori, vect_multnb(&ray->dir, ray->t));
+	}
+	//Cone
+	if ((id = inter_all(b, ray, 1.0)) > 0)
+	{
+		b->inter.id = id;
+		obj = search_obj(b, b->inter.id);
+		dest = vect_multnb(&obj->h, vect_dot(ray2vect(*ray), obj->h) / vect_norme2(obj->h));
+		b->inter.n = vect_sub(vect_sub(ray2vect(*ray), obj->ori), dest);
+		if (vect_dot(b->inter.n, ray->dir) > 0.0)
+			b->inter.n = vect_multnb(&b->inter.n, -1);
+		b->inter.tex = obj->tex;
+		dest = vect_add(ray->ori, vect_multnb(&ray->dir, ray->t));
+	}
+	return (ray->t);
 }
 
 /*
-** Checker l'intersection avec toutes les spheres
+** Check intersction of all the objects of the world and the universe and not clement
 */
 
-int		inter_sphere(t_b *b, t_ray *ray)
+double	inter_obj_lux(t_b *b, t_ray *ray)
 {
-			// ft_putendlcolor("inter_sphere();", MAGENTA);
-	t_sph			*l;
+			// ft_putendlcolor("inter_obj_lux();", MAGENTA);
+	ray->t = 1.0;
+	inter_all(b, ray, 0.0);
+	return (ray->t);
+}
+
+/*
+** inter for everything
+*/
+
+int		inter_all(t_b *b, t_ray *ray, double min)
+{
+	t_obj			*l;
 	double			t;
 	unsigned int	id;
 
-	l = b->sph;
+	l = b->obj;
 	id = -1;
 	while (l)
 	{
-		t = calc_sphere(ray, *l);
-		if (t > 1 && t < b->inter->min && t < b->max)
+		if (l->form == 1)
+			t = calc_plane(ray, *l, min);
+		else if (l->form == 2)
+			t = calc_sphere(ray, *l, min);
+		else if (l->form == 3)
+			t = calc_cyl(ray, *l, min);
+		else if (l->form == 4)
+			t = calc_cone(ray, *l, min);
+		if (t > min && t < ray->t)
 		{
-			b->inter->min = t;
-			id = l->id;
-		}
-		l = l->next;
-	}
-	return (id);
-}
-
-/*
-** Checker l'intersection avec tous les planes
-*/
-
-int		inter_plane(t_b *b, t_ray *ray)
-{
-			// ft_putendlcolor("inter_plane();", MAGENTA);
-	t_plane			*l;
-	double			t;
-	int				id;
-
-	l = b->plane;
-	id = -1;
-	while (l)
-	{
-		t = 0;
-		t = calc_plane(ray, *l);
-		if (t > 1 && t < b->inter->min && t < b->max)
-		{
-			b->inter->min = t;
+			ray->t = t;
 			id = l->id;
 		}
 		l = l->next;
