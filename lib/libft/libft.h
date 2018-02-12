@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/22 13:46:11 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/15 18:57:17 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/06 15:00:12 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,7 @@ void				ft_resetcolor();
 void				ft_rot(int nb, char *str, int start, int end);
 char				*ft_file_to_str(char *av);
 char				*no_case(char *str);
+double				ft_atof(char *s);
 
 /*
 ** Int

@@ -6,20 +6,22 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/02 21:24:57 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/12 15:22:04 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __RTV1_H
 # define __RTV1_H
 # include "libft.h"
+// # include "parse.h"
 # include <SDL.h>
+// # include <SDL_image.h>
+// # include <SDL_ttf.h>
 # include <math.h>
 # include <limits.h>
 # define MAX_DEEP 1
 # define DEG2RAD(x) (x * M_PI / 180.0)
 					#include <stdio.h>
-
 
 
 //Specular entre le rayon envoyé et le rayon de la lumiere et on blanchi le pixel
@@ -142,7 +144,6 @@ typedef	struct				s_lux
 
 typedef struct				s_cam
 {
-	int						angle;
 	t_v						pos;
 	t_v						dir;
 	t_v						dirup;
@@ -168,45 +169,8 @@ typedef	struct				s_obj
 	t_v						h;
 	t_v						ori;
 	t_tex					tex;
-	t_col					col;
 	struct s_obj			*next;
 }							t_obj;
-
-/*
-** Sommet d'une face
-*/
-
-typedef struct				s_som
-{
-	t_v						v;		//Sommet
-	t_v						vt;		//Coordonnée texture pour un sommet
-	t_v						vn;		//Normale du sommet
-}							t_som;
-
-/*
-** List of the faces of the obj
-*/
-
-typedef struct				s_face
-{
-	unsigned int			id;
-	t_som					som1;
-	t_som					som2;
-	t_som					som3;
-	struct s_face			*next;
-}							t_face;
-
-/*
-** Parsing struct
-*/
-
-typedef struct				s_pars
-{
-	t_vl					*v;
-	t_vl					*vt;
-	t_vl					*vn;
-	t_face					*facelist;
-}							t_pars;
 
 /*
 ** Intersection struct
@@ -228,12 +192,18 @@ typedef struct				s_inter
 
 typedef struct				s_act
 {
-	int						action;		//1 pour ellipse
+	int						action;		//1 = ellipse, 2 = move axe
+	int						p;			//TO know if we need to increase or decrease
 	double					speed;		//vitesse de l'action
 	double					dist;
+	double					max;		//Dist max
+	double					min;		//dist min
 	double					angle;
+	double					*axis;		//pointeur sur l'axe correspondant
+	double					start;
 	t_obj					*obj1;
 	t_obj					*obj2;
+	struct s_act			*next;
 }							t_act;
 
 /*
@@ -252,13 +222,17 @@ typedef struct				s_matrice
 typedef struct				s_b
 {
 	double					max;
+	double					colmax;	//max color
+	int						id;		//Id de l'objet selectionné
+	int						p;		//Pour les actions pour savoir si on deplace. Oui faut trouver comment faire autrement parceque c'est deguelasse
 	int						winx;
 	int						winy;
 	int						maxid;
 	int						aliasing;
+	t_act					*act;
 	t_px					**tab_px;
 	t_vl					*vl;			//Liste du centre des objets
-	t_pars					pars;
+	// t_pars					pars;
 	t_cam					cam;
 	t_vp					vp;
 	t_obj					*obj;
@@ -268,6 +242,15 @@ typedef struct				s_b
 	SDL_Window				*win;
 	SDL_Surface				*img;
 }							t_b;
+
+/*
+** main functions						| maintest2.c
+*/
+
+void						rt(t_b *b);
+void						draw(t_b *b);
+void						draw_lux(t_b *b);
+
 
 /*
 ** Structs inits						| init.c
@@ -287,7 +270,7 @@ void						init_inter(t_inter *inter);
 t_matrice					init_matrice();
 t_obj						init_cone(t_v v, t_col col, t_v h);
 t_obj						init_cyl(t_v v, t_col col, t_v h, double r);
-t_act						init_act(t_obj *obj1, t_obj *obj2, int action);
+t_act						init_act(t_obj *obj1, int action, int axis);
 
 /*
 **	Errors								| error.c
@@ -311,6 +294,7 @@ void						ray(t_b *b);
 t_v							draw_pixelvp(t_b *b, t_px px);
 t_v							ray2vect(t_ray ray);
 double						solve_equation(double min, double a, double b, double c);
+t_px						pos2px(t_b *b, t_v v);
 
 /*
 ** Catch the events						| event.c
@@ -318,12 +302,18 @@ double						solve_equation(double min, double a, double b, double c);
 
 int							event();
 void						ev_move_cam(t_b *b, int ev);
-void						ev_move_obj(t_b *b, int ev);
 void						ev_rotate_xy(t_b *b, int ev);
 void						ev_qualitat(t_b *b, int ev);
 void						ev_reset(t_b *b);
-void						ev_mouse(t_b *b);
 
+/*
+** Event on objects
+*/
+
+void						event_obj(t_b *b, int ev);
+void						ev_move_obj(t_b *b, int ev);
+void						ev_move_lum(t_b *b, int ev);
+void						ev_mouse(t_b *b);
 
 /*
 **	Basic math between vectors			| vect_valc1.c
@@ -364,13 +354,14 @@ t_vl						*search_vl(t_b *b, int id);
 ** Utilitaries for color				| color.c
 */
 
+t_col						get_color(t_b *b, t_ray ray);
 t_col						color_add(t_col col, t_col col2);
 t_col						color_mult(t_col col, t_col col2);
 t_col						color_multnb(t_col col, double nb);
 void						color_sat(t_col *col);
 unsigned int				col2int(t_col col);
 void						print_col(t_col col);
-
+void						color_max(t_col col, double *colmax);
 
 /*
 ** Intercept for objs 					| intersection.c
@@ -395,6 +386,7 @@ double						calc_cyl(t_ray *ray, t_obj cyl, double min);
 
 t_obj						*add_obj(t_b *b, t_obj obj);
 t_obj						*search_obj(t_b *b, int id);
+void						delete_obj(t_b *b, int id);
 
 /*
 ** Lux									| lux.c
@@ -405,22 +397,6 @@ void						calc_dif(t_lux *lux, t_inter inter);
 void						calc_spe(t_lux *lux, t_inter inter, t_v to_eye);
 t_lux						*add_lux(t_b *b, t_lux lux);
 t_lux						*search_lux(t_b *b, int id);
-
-/*
-** Obj parsing							| parseur.c
-*/
-
-void						parse_error(int e, char *s);
-void						parse_main(t_b *b, char *av);
-void						parse_redirect(t_pars *pars, char *s);
-void						parse_v(t_pars *pars, char **tab);
-void						parse_vt(t_pars *pars, char **tab);
-void						parse_vn(t_pars *pars, char **tab);
-void						parse_f(t_pars *pars, char **tab);
-void						check_f(char **tab);
-void						parse_mtl(char *s);
-int							ft_isnum(char *str);
-char						*ft_implode(char **tab, char c);
 
 /*
 ** The differents scenes
@@ -450,6 +426,17 @@ t_v							matrice_multvect(t_matrice m, t_v v);
 void						refresh_dir(t_cam *cam, t_v v);
 void						refresh_dirup(t_cam *cam, t_v v);
 void						refresh_dirright(t_cam *cam, t_v v);
+
+/*
+** Actions to animate scene				| action.c
+*/
+
+void						action(t_act *act);
+t_act						*add_action(t_b *b, t_act act);
+void						set_act(t_act *act, double min, double max, int axis);
+void						act_movaxis(t_act *act);
+void						act_ellipse(t_act *act);
+void						act_color(t_obj *obj);
 
 
 /*

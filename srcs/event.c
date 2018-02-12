@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/02 21:37:44 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/12 16:42:33 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,9 @@ int		event(t_b *b)
 				ev == SDLK_KP_MINUS || ev == SDLK_KP_PLUS)
 			ev_move_cam(b, ev);
 		else if (ev == SDLK_i || ev == SDLK_j || ev == SDLK_k || ev == SDLK_l
-		|| ev == SDLK_u || ev == SDLK_o)
-			ev_move_obj(b, ev);
+			|| ev == SDLK_u || ev == SDLK_o || ev == SDLK_DELETE || ev == SDLK_KP_0
+			|| ev == SDLK_KP_1 || ev == SDLK_KP_2 || ev == SDLK_KP_3 || ev == SDLK_KP_4 || ev == SDLK_KP_5)
+			event_obj(b, ev);
 		else if (ev == SDLK_3 || ev == SDLK_4)
 			ev_qualitat(b, ev);
 		else if (ev == SDLK_r)
@@ -43,7 +44,7 @@ int		event(t_b *b)
 		else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
 			ev_mouse(b);
 		else if (ev == SDLK_SPACE)
-			b->inter.id = -1;
+			b->act->action *= -1;
 		else if (ev == SDLK_f)
 			to_fdf(b, "map.fdf");
 	}
@@ -141,52 +142,6 @@ void		ev_move_cam(t_b *b, int ev)
 		b->cam.pos = vect_add(b->cam.pos, vect_multnb(&b->cam.dir, 2));
 	else if (ev == SDLK_KP_MINUS)
 		b->cam.pos = vect_sub(b->cam.pos, vect_multnb(&b->cam.dir, 2));
-}
-
-/*
-** Moving keys : up | down | right | left
-*/
-
-void	ev_move_obj(t_b *b, int ev)
-{
-			ft_putendlcolor("ev_move_obj();", MAGENTA);
-	t_obj	*sph;
-	t_vl	*list;
-
-		ft_putnbrendl(b->inter.id);
-	list = search_vl(b, b->inter.id);
-	if (!list)
-		return ;
-	printf("list = %p\n", list);
-	if (ev == SDLK_i)
-		list->v.y += 0.5;
-	else if (ev == SDLK_k)
-		list->v.y -= 0.5;
-	else if (ev == SDLK_l)
-		list->v.x -= 0.5;
-	else if (ev == SDLK_j)
-		list->v.x += 0.5;
-	else if (ev == SDLK_u)
-		list->v.z -= 0.5;
-	else if (ev == SDLK_o)
-		list->v.z += 0.5;
-	if ((sph = search_obj(b, list->id)))
-	{
-		ft_putendl("AVANT");
-		vect_print(sph->ori);
-		sph->ori = list->v;
-		ft_putendl("APRES");
-		vect_print(sph->ori);
-	}
-}
-
-void	ev_mouse(t_b *b)
-{
-			ft_putendlcolor("ev_mouse();", MAGENTA);
-	t_px px;
-
-	SDL_GetMouseState(&px.x, &px.y);
-	printf("id = %d\n", b->tab_px[px.y][px.x].id);
 }
 
 

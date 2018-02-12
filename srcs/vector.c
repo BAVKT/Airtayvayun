@@ -44,8 +44,9 @@ t_vl		*add_vl(t_b *b, t_vl vl)
 
 t_vl	*search_vl(t_b *b, int id)
 {
+			ft_putendlcolor("search_vl();", MAGENTA);
 	t_vl	*l;
-
+			printf("ID SEARCH = %d\n", id);
 	if (id <= 0 || !b || !b->vl)
 		return (NULL);
 	l = b->vl;

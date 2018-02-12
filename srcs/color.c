@@ -6,11 +6,50 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/19 16:58:03 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/30 16:47:12 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/12 15:14:04 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RTv1.h"
+
+/*
+** Return the color
+*/
+
+t_col		get_color(t_b *b, t_ray ray)
+{
+	t_col		col;
+	t_lux 		*lux;
+	t_ray		to_light;
+	double		amp;
+
+	if (ray.t < b->max)
+	{
+		vect_normalize(&b->inter.n);
+		lux = b->lux;
+		col = calc_amb(b);
+		to_light.ori = ray2vect(ray);
+		vect_normalize(&ray.dir);
+		while (lux)
+		{
+			to_light.dir = vect_sub(lux->ori, to_light.ori);
+			amp = 1 / (lux->amp_cst + lux->amp_lin * vect_norme(to_light.dir) + lux->amp_quad * vect_norme2(to_light.dir));
+			inter_obj_lux(b, &to_light);
+			lux->light = to_light.dir;
+			vect_normalize(&lux->light);
+			calc_dif(lux, b->inter);
+			col = color_multnb(color_add(col, lux->lum_dif), amp);
+			calc_spe(lux, b->inter, vect_multnb(&ray.dir, -1));
+			col = color_multnb(color_add(col, lux->lum_spe), amp);
+			lux = lux->next;
+		}
+		color_max(col, &b->colmax);
+	}
+	else
+		col = init_col(0.0, 0.0, 0.0);
+	return (col);
+}
+
 
 /*
 ** Add 2 colors and return the result
@@ -95,6 +134,16 @@ void		color_sat(t_col *col)
 	else if (col->b < 0.0)
 		col->b = 0.0;
 
+}
+
+void	color_max(t_col col, double *colmax)
+{
+	if (col.r > *colmax)
+		*colmax = col.r;
+	if (col.g > *colmax)
+		*colmax = col.g;
+	if (col.b > *colmax)
+		*colmax = col.b;
 }
 
 /*

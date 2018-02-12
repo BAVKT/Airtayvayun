@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 20:08:33 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/02 19:33:29 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/12 16:49:26 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,33 +65,25 @@ double		solve_equation(double min, double a, double b, double c)
 }
 
 /*
-**
+** return the position of a 3D obj on the viewplane
 */
 
-// t_px	pos2px(t_b *b, t_v v)
-// {
-// 	t_px	px;
-// 	t_ray	ray;
+t_px	pos2px(t_b *b, t_v v)
+{
+	t_px	px;
+	t_ray	ray;
+	double	n;
 
-// 	ray.ori = v;
-// 	ray.dir = vect_sub(v, b->cam.pos);
-// 	vect_normalize(&ray.dir);
-// 	ray.y = b->dist;
-// 	v = ray2vect(ray);
-// 	px.x = ;
-// 	t_v	tmp;
-// 	t_v tmp2;
-// 	t_v tmp3;
+	ray.ori = v;
+	ray.dir = vect_sub(v, b->cam.pos);
+	v = ray2vect(ray);
+	n = vect_dot(ray.dir, b->cam.dirright) / vect_dot(ray.dir, b->cam.dir);
+	px.x = (int)(b->winx * (0.5 + n * b->vp.dist / b->vp.w));
+	n = vect_dot(ray.dir, b->cam.dirup) / vect_dot(ray.dir, b->cam.dir);
+	px.y = (int)(b->winy * (0.5 - n * b->vp.dist / b->vp.h));
+	return (px);
+}
 
-// 	b->vp.xi = b->vp.w / (double)b->winx;
-// 	b->vp.yi = b->vp.h / (double)b->winy;
-// 	tmp = vect_multnb(&b->cam.dirright, b->vp.xi * (double)px.x);
-// 	tmp2 = vect_multnb(&b->cam.dirup, b->vp.yi * (double)px.y);
-// 	b->vp.upleft = vect_sub(vect_add(b->cam.pos, vect_add(vect_multnb(&b->cam.dir, b->vp.dist),
-// 				vect_multnb(&b->cam.dirup, b->vp.h / 2))), vect_multnb(&b->cam.dirright, b->vp.w / 2));
-// 	tmp3 = vect_add(b->vp.upleft, vect_sub(tmp, tmp2));
-// 	return (px);
-// }
 
 
 

@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/02 21:39:43 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/05 21:24:45 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,22 @@
 
 void	init_b(t_b *b)
 {
+			ft_putendlcolor("init_b();", MAGENTA);
 	int	i;
-            	ft_putendlcolor("init_b();", MAGENTA);
+
+	b->p = 1.0;
 	b->win = NULL;
 	b->winx = 640 * 1.5;
 	b->winy = 480 * 1.5;
 	init_cam(&b->cam);
 	init_vp(b);
+	b->vl = NULL;
 	b->lux = NULL;
 	b->obj = NULL;
-	b->amb = init_col(0.2, 0.2, 0.2);
+	b->amb = init_col(0.5, 0.5, 0.5);
 	b->max = 66666666;
 	b->aliasing = 4;
+	b->colmax = 0.0;
 	b->tab_px = (t_px**)malloc(sizeof(t_px*) * b->winy);
 	i = -1;
 	while (++i < b->winy)
@@ -92,8 +96,8 @@ void	init_vp(t_b *b)
 	b->vp.xi = b->vp.w / (double)b->winx;
 	b->vp.yi = b->vp.h / (double)b->winy;
 	b->vp.dist = 15;
-	b->vp.upleft = vect_sub(vect_add(b->cam.pos, vect_add(vect_multnb(&b->cam.dir, b->vp.dist),
-		vect_multnb(&b->cam.dirup, b->vp.h / 2))), vect_multnb(&b->cam.dirright, b->vp.w / 2));
+	b->vp.upleft = vect_add(b->cam.pos, vect_add(vect_multnb(&b->cam.dir, b->vp.dist),
+		vect_multnb(&b->cam.dirup, b->vp.h / 2))), vect_multnb(&b->cam.dirright, -b->vp.w / 2);
 }
 
 /*
@@ -157,13 +161,24 @@ t_tex		init_tex()
 ** Init the action struct
 */
 
-t_act		init_act(t_obj *obj1, t_obj *obj2, int action)
+t_act		init_act(t_obj *obj1, int action, int axis)
 {
-	t_act	act;
+            ft_putendlcolor("init_act();", MAGENTA);
+	t_act act;
 
 	act.action = action;
 	act.obj1 = obj1;
-	act.obj2 = obj2;
+	act.speed = 0.1;
+	act.p = 0;			//Pour savoir si on deplace en positif ou en negatif
+	act.next = NULL;
+	act.min = -3;
+	act.max = 3;
+	if (axis == 1)
+		act.axis = &obj1->ori.x;
+	else if (axis == 2)
+		act.axis = &obj1->ori.y;
+	else if (axis == 3)
+		act.axis = &obj1->ori.z;
 	return (act);
 }
 
@@ -199,7 +214,6 @@ t_lux	init_lux(t_v pos)
 void	init_cam(t_cam *cam)
 {
 		ft_putendlcolor("init_cam();", MAGENTA);
-	cam->angle = DEG2RAD(60);
 	cam->pos = init_vect(0, 0, -100);
 	cam->dir = init_vect(0, 0, 1);
 	cam->dirup = init_vect(0, 1, 0);

@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/02 21:38:00 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/12 17:06:07 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,12 @@
 **	Basic draw
 */
 
-void	draw(t_b *b)
+void	rt(t_b *b)
 {
             // ft_putendlcolor("draw();", MAGENTA);
-	t_ray		ray;
-	t_ray		to_light;
-	t_lux		*lux;
 	t_px		px;
+	t_ray		ray;
 	t_col		col;
-	double		amp;
 	int			i;
 	int			j;
 
@@ -42,31 +39,9 @@ void	draw(t_b *b)
 			ray.ori = b->cam.pos;
 			ray.dir = vect_sub(draw_pixelvp(b, px), b->cam.pos);
 			b->inter.id  = -1;
-			inter_obj(b, &ray);
-			if (ray.t < b->max)
-			{
-				vect_normalize(&b->inter.n);
-				lux = b->lux;
-				col = calc_amb(b);
-				to_light.ori = ray2vect(ray);
-				vect_normalize(&ray.dir);
-				while (lux)
-				{
-					to_light.dir = vect_sub(lux->ori, to_light.ori);
-					amp = 1 / (lux->amp_cst + lux->amp_lin * vect_norme(to_light.dir) + lux->amp_quad * vect_norme2(to_light.dir));
-					inter_obj_lux(b, &to_light);
-					lux->light = to_light.dir;
-					vect_normalize(&lux->light);
-					calc_dif(lux, b->inter);
-					col = color_multnb(color_add(col, lux->lum_dif), amp);
-					calc_spe(lux, b->inter, vect_multnb(&ray.dir, -1));
-					col = color_multnb(color_add(col, lux->lum_spe), amp);
-					lux = lux->next;
-				}
-				color_sat(&col);
-			}
-			else
-				col = init_col(0.0, 0.0, 0.0);
+			if (vect_dot(ray.dir, b->cam.dir) > 0)
+				inter_obj(b, &ray);
+			col = get_color(b, ray);
 			i = -1;
 			while (++i < b->aliasing)
 			{
@@ -75,12 +50,6 @@ void	draw(t_b *b)
 				{
 					if (px.y + j < b->winy && px.x + i < b->winx)
 					{
-						SDL_LockSurface(b->img);
-						if (i || j)
-							*((unsigned int *)b->img->pixels + b->winx * (px.y + j) + px.x + i) = col2int(col);
-						else
-							*((unsigned int *)b->img->pixels + b->winx * (px.y + j) + px.x + i) = col2int(col);
-						SDL_UnlockSurface(b->img);
 						b->tab_px[px.y + j][px.x + i] = px;
 						b->tab_px[px.y + j][px.x + i].col = col;
 						b->tab_px[px.y + j][px.x + i].dist = 30 - ray.t;
@@ -92,8 +61,89 @@ void	draw(t_b *b)
 		}
 		px.x += b->aliasing;
 	}
-	// action(init_act());
+	draw_lux(b);
+	draw(b);
+	action(b->act);
 	SDL_UpdateWindowSurface(b->win);
+}
+
+void		draw(t_b *b)
+{
+	t_px		px;
+	int			i;
+	int			j;
+	t_col		col;
+
+		// printf("colmax = %f\n", b->colmax);
+		// printf("colmax = %d\n", RAND_MAX);
+	px.x = 0;
+	while (px.x < b->winx)
+	{
+		px.y = 0;
+		while (px.y < b->winy)
+		{
+			i = -1;
+			while (++i < b->aliasing)
+			{
+				j = -1;
+				while (++j < b->aliasing)
+				{
+					if (px.y + j < b->winy && px.x + i < b->winx)
+					{
+						col = color_multnb(b->tab_px[px.y + j][px.x + i].col, 1 / b->colmax);
+						SDL_LockSurface(b->img);
+						*((unsigned int *)b->img->pixels + b->winx * (px.y + j) + px.x + i) = col2int(col);
+						SDL_UnlockSurface(b->img);
+					}
+				}
+			}
+			px.y += b->aliasing;
+		}
+		px.x += b->aliasing;
+	}
+}
+
+void		draw_lux(t_b *b)
+{
+	t_px		px;
+	int			i;
+	int			j;
+	int			r;
+	t_col		col;
+	t_lux 		*lux;
+
+	lux = b->lux;
+	col = init_col(b->colmax, b->colmax, b->colmax);
+	while (lux)
+	{
+		if (vect_dot(vect_sub(lux->ori, b->cam.pos), b->cam.dir) > 0)
+		{
+			px = pos2px(b, lux->ori);
+			if (vect_norme(vect_sub(lux->ori, b->cam.pos)) / b->vp.dist < 1)
+				r = 20;
+			else
+				r = 20 - (int)(0.4 * vect_norme(vect_sub(lux->ori, b->cam.pos)) / b->vp.dist);
+			if (r < 1)
+				r = 1;
+			i = -r - 1;
+			while (++i <= r)
+			{
+				j = -r - 1;
+				while (++j <= r)
+				{
+						// printf("id = %d\n px.x = %d\n px.y = %d\n", lux->id, px.x + i, px.y + j);
+					if (px.x + i >= 0 && px.y + j >= 0 && px.y + j < b->winy && px.x + i < b->winx &&
+						(i * i) + (j * j) < r * r)
+					{
+						b->tab_px[px.y + j][px.x + i] = px;
+						b->tab_px[px.y + j][px.x + i].col = col;
+						b->tab_px[px.y + j][px.x + i].id = lux->id;
+					}
+				}
+			}
+		}
+		lux = lux->next;
+	}
 }
 
 int main()
@@ -101,9 +151,9 @@ int main()
 	t_b			b;
 
 	init_b(&b);
-	scene3(&b);
+	scene5(&b);
 	while (event(&b))
-		draw(&b);
+		rt(&b);
 	SDL_DestroyWindow(b.win);
 	SDL_Quit();
 	return 0;
