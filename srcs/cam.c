@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cam.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cquillet <cquillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/26 20:43:18 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/01/26 21:55:21 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/19 18:43:47 by cquillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 void	refresh_dir(t_cam *cam, t_v v)
 {
 	cam->dir = v;
-	cam->dirright = vect_prod(cam->dir, cam->dirup);
+	cam->dirright = vect_prod(v, cam->dirup);
 }
 
 /*
@@ -29,7 +29,7 @@ void	refresh_dir(t_cam *cam, t_v v)
 void	refresh_dirup(t_cam *cam, t_v v)
 {
 	cam->dirup = v;
-	cam->dir = vect_prod(cam->dirup, cam->dirright);
+	cam->dir = vect_prod(v, cam->dirright);
 }
 
 /*
@@ -39,5 +39,5 @@ void	refresh_dirup(t_cam *cam, t_v v)
 void	refresh_dirright(t_cam *cam, t_v v)
 {
 	cam->dirright = v;
-	cam->dirup = vect_prod(cam->dirright, cam->dir);
+	cam->dirup = vect_prod(v, cam->dir);
 }

@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 20:08:33 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/12 16:49:26 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/17 21:07:37 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,21 @@ t_px	pos2px(t_b *b, t_v v)
 	return (px);
 }
 
+/*
+** Affiche toutes les caracteristiques d'un objet
+*/
 
-
-
-
+void	print_obj(t_obj *obj)
+{
+	ft_putendl("------------ PRINT OBJ ------------");
+	printf("form = %d \n id = %d \n a = %f \n b = %f \n c = %f \n d = %f \n angle = %f \n",
+		obj->form, obj->id, obj->a, obj->b, obj->c,obj->d, obj->angle);
+	ft_putstr("h = ");
+	vect_print(obj->h);
+	ft_putstr("ori = ");
+	vect_print(obj->ori);
+	ft_putendl("-----------------------------------");
+}
 
 
 

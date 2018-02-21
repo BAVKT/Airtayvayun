@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/22 13:46:11 by vmercadi          #+#    #+#             */
-/*   Updated: 2017/11/29 17:26:30 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/16 19:38:13 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <fcntl.h>
-# define BUFF_SIZE 666
+# define BUFF_SIZE 666666
 
 typedef struct		s_lst
 {
@@ -166,6 +166,7 @@ void				ft_resetcolor();
 void				ft_rot(int nb, char *str, int start, int end);
 char				*ft_file_to_str(char *av);
 char				*no_case(char *str);
+double				ft_atof(char *s);
 
 /*
 ** Int

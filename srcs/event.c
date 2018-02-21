@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   event.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cquillet <cquillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 13:17:12 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/12 16:42:33 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/19 19:27:44 by cquillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int		event(t_b *b)
 void	ev_reset(t_b *b)
 {
 			ft_putendlcolor("ev_reset();", MAGENTA);
-	init_cam(&b->cam);
+	init_cam(b);
 	b->lux->ori = init_vect(0.0, 0.0, 25.0);
 	b->aliasing = 4;
 }
@@ -139,9 +139,9 @@ void		ev_move_cam(t_b *b, int ev)
 	else if (ev == SDLK_d)
 		b->cam.pos = vect_add(b->cam.pos, vect_multnb(&b->cam.dirright, 0.5));
 	else if (ev == SDLK_KP_PLUS)
-		b->cam.pos = vect_add(b->cam.pos, vect_multnb(&b->cam.dir, 2));
+		b->cam.pos = vect_add(b->cam.pos, vect_multnb(&b->cam.dir, 3));
 	else if (ev == SDLK_KP_MINUS)
-		b->cam.pos = vect_sub(b->cam.pos, vect_multnb(&b->cam.dir, 2));
+		b->cam.pos = vect_sub(b->cam.pos, vect_multnb(&b->cam.dir, 3));
 }
 
 

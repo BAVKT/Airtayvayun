@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/13 18:12:09 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/05 21:24:45 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/21 21:27:58 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	init_b(t_b *b)
 	b->win = NULL;
 	b->winx = 640 * 1.5;
 	b->winy = 480 * 1.5;
-	init_cam(&b->cam);
 	init_vp(b);
+	init_cam(b);
 	b->vl = NULL;
 	b->lux = NULL;
 	b->obj = NULL;
@@ -39,6 +39,15 @@ void	init_b(t_b *b)
 	while (++i < b->winy)
 		b->tab_px[i] = (t_px*)malloc(sizeof(t_px) * b->winx);
 	//init_inter(b->inter);
+}
+
+/*
+** SDL windows init
+*/
+
+void	init_win(t_b *b)
+{
+			ft_putendlcolor("init_win();", MAGENTA);
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 		error_quit(1);
 	if (!(b->win = SDL_CreateWindow("RTv1",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,
@@ -153,12 +162,14 @@ t_tex		init_tex()
 	tex.col = init_col(1.0, 1.0, 1.0);
 	tex.ka = init_col(1.0, 1.0, 1.0);
 	tex.kd = init_col(1.0, 1.0, 1.0);
-	tex.ks = init_col(0.0, 0.0, 0.0);
+	tex.ks = init_col(1.0, 1.0, 1.0);
 	return (tex);
 }
 
 /*
 ** Init the action struct
+** Action : 1 = Ellipse | 2 = axe	| 3 = color
+** Axis   : 1 = X 		| 2 = Y 	| 3 = Z
 */
 
 t_act		init_act(t_obj *obj1, int action, int axis)
@@ -186,17 +197,19 @@ t_act		init_act(t_obj *obj1, int action, int axis)
 ** Init the lux struct
 */
 
-t_lux	init_lux(t_v pos)
+t_lux	init_lux(t_v pos, t_col dif, t_col spe)
 {
             ft_putendlcolor("init_lux();", MAGENTA);
 	t_lux	lux;
 
 	lux.ori = pos;
-	lux.dif = init_col(0.7, 0.7, 0.7);
-	lux.spe = init_col(0.7, 0.7, 0.7);
-	lux.amp_cst = 1;
-	lux.amp_lin = 0;
-	lux.amp_quad = 0;
+	lux.dif = dif;
+	lux.spe = spe;
+	lux.amp_cst = 1.0;
+			// sqrt(dif.r * dif.r + dif.g * dif.g + dif.b * dif.b);
+			// + 0.5 / sqrt(spe.r * spe.r + spe.g * spe.g + spe.b * spe.b);
+	lux.amp_lin = 0.001;
+	lux.amp_quad = 0.0;
 	lux.next = NULL;
 	return (lux);
 }
@@ -211,14 +224,12 @@ t_lux	init_lux(t_v pos)
 ** Init the cam strcut values
 */
 
-void	init_cam(t_cam *cam)
+void	init_cam(t_b *b)
 {
 		ft_putendlcolor("init_cam();", MAGENTA);
-	cam->pos = init_vect(0, 0, -100);
-	cam->dir = init_vect(0, 0, 1);
-	cam->dirup = init_vect(0, 1, 0);
-	cam->dirright = init_vect(1, 0, 0);
-	cam->dirright = vect_prod(cam->dir, cam->dirup);
+	b->cam.pos = init_vect(0, 0, -b->vp.dist);
+	b->cam.dir = init_vect(0, 0, 1);
+	refresh_dirright(&b->cam, init_vect(0, 1, 0));
 }
 /*
 ** Init for the plane
@@ -230,6 +241,8 @@ t_obj	init_plane(double a, double b, double c, double d, t_col col)
 	t_obj plane;
 
 	plane.form = 1;
+	if (!a && !b && !c && !d)
+		plane.b = 1.0;
 	plane.a = a;
 	plane.b = b;
 	plane.c = c;
@@ -241,7 +254,7 @@ t_obj	init_plane(double a, double b, double c, double d, t_col col)
 	plane.tex = init_tex();
 	plane.tex.ks = init_col(0.6, 0.6, 0.6);
 	plane.tex.kd = init_col(0.7, 0.7, 0.7);
-	plane.tex.col = col;
+	plane.tex.col = (!col2int(col)) ? init_col(1.0, 1.0, 1.0) : col;
 	plane.next = NULL;
 	return (plane);
 }
@@ -250,7 +263,7 @@ t_obj	init_plane(double a, double b, double c, double d, t_col col)
 ** Init for sphere
 */
 
-t_obj	init_sph(t_v v, t_col col)
+t_obj	init_sph(t_v v, t_col col, double r)
 {
 		ft_putendlcolor("init_sph();", MAGENTA);
 	t_obj	sph;
@@ -260,14 +273,17 @@ t_obj	init_sph(t_v v, t_col col)
 	sph.b = 0;
 	sph.c = 0;
 	sph.d = 0;
-	sph.r = 1;
+	if (r < 0.01)
+		r = 0.1;
+	else
+		sph.r = r;
 	sph.ori = v;
 	sph.angle = 0;
 	sph.h = init_vect(0.0, 0.0, 0.0);
 	sph.tex = init_tex();
-	sph.tex.ks = init_col(0.6, 0.6, 0.6);
-	sph.tex.kd = init_col(0.7, 0.7, 0.7);
-	sph.tex.col = col;
+	sph.tex.ks = init_col(0.7, 0.7, 0.7);
+	sph.tex.kd = init_col(0.6, 0.6, 0.6);
+	sph.tex.col = (!col2int(col)) ? init_col(1.0, 1.0, 1.0) : col;
 	sph.next = NULL;
 	return (sph);
 }
@@ -276,7 +292,7 @@ t_obj	init_sph(t_v v, t_col col)
 ** Init for cone
 */
 
-t_obj	init_cone(t_v v, t_col col, t_v h)
+t_obj	init_cone(t_v v, t_col col, t_v h, double r)
 {
             ft_putendlcolor("init_cone();", MAGENTA);
 	t_obj	cone;
@@ -286,14 +302,17 @@ t_obj	init_cone(t_v v, t_col col, t_v h)
 	cone.b = 0;
 	cone.c = 0;
 	cone.d = 0;
-	cone.r = 0;
+	if (r < 0.01)
+		r = 0.1;
+	else
+		cone.r = r;
 	cone.ori = v;
 	cone.angle = DEG2RAD(20);
 	cone.h = h;
 	cone.tex = init_tex();
 	cone.tex.ks = init_col(1.0, 1.0, 1.0);
 	cone.tex.kd = init_col(1.0, 1.0, 1.0);
-	cone.tex.col = col;
+	cone.tex.col = (!col2int(col)) ? init_col(1.0, 1.0, 1.0) : col;
 	cone.next = NULL;
 	return (cone);
 }
@@ -312,14 +331,17 @@ t_obj		init_cyl(t_v v, t_col col, t_v h, double r)
 	cyl.b = 0;
 	cyl.c = 0;
 	cyl.d = 0;
-	cyl.r = r;
+	if (r < 0.01)
+		r = 0.1;
+	else
+		cyl.r = r;
 	cyl.h = h;
 	cyl.ori = v;
 	cyl.angle = 0;
 	cyl.tex = init_tex();
 	cyl.tex.ks = init_col(1.0, 1.0, 1.0);
 	cyl.tex.kd = init_col(1.0, 1.0, 1.0);
-	cyl.tex.col = col;
+	cyl.tex.col = (!col2int(col)) ? init_col(1.0, 1.0, 1.0) : col;
 	cyl.next = NULL;
 	return (cyl);
 }
@@ -340,7 +362,20 @@ t_obj		init_plane2(t_v ori, t_v h, t_v w)
 	return (p);
 }
 
+/*
+** Init ray
+*/
 
+t_ray	init_ray(t_v ori, t_v dir, double t)
+{
+		// ft_putendlcolor("init_ray();", MAGENTA);
+	t_ray	ray;
+
+	ray.ori = ori;
+	ray.dir = dir;
+	ray.t = t;
+	return (ray);
+}
 
 
 

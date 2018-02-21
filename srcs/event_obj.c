@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   event_obj.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cquillet <cquillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/12 14:55:30 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/12 16:41:07 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/19 18:49:27 by cquillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,28 +24,24 @@
 
 void	event_obj(t_b *b, int ev)
 {
-	// t_px	px;
-	// double	x;
-	// double	y;
+	t_px	px;
 
-	// SDL_GetMouseState(&px.x, &px.y);
-	// x = ((double)px.x / 10) + b->cam.pos.x;
-	// y = ((double)px.y / 10) + b->cam.pos.y;
+	SDL_GetMouseState(&px.x, &px.y);
 	if (ev == SDLK_i || ev == SDLK_j || ev == SDLK_k || ev == SDLK_l
 	|| ev == SDLK_u || ev == SDLK_o)
 		ev_move_obj(b, ev);
 	else if (ev == SDLK_DELETE)
 		delete_obj(b, b->id);
 	else if (ev == SDLK_KP_0)
-		add_lux(b, init_lux(init_vect(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 5)));
+		add_lux(b, init_lux(init_vect(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 5), init_col(0.7, 0.7, 0.7), init_col(0.3, 0.3, 0.3)));
 	else if (ev == SDLK_KP_1)
-		add_obj(b, init_sph(init_vect(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 100.0), init_col(0.2, 0.2, 0.2)));
+		add_obj(b, init_sph(init_vect(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 100.0), init_col(1.0, 1.0, 1.0), 1));
 	else if (ev == SDLK_KP_2)
-		add_obj(b, init_plane(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 5.0, 5.0, init_col(0.2, 0.2, 0.2)));
+		add_obj(b, init_plane(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 5.0, 5.0, init_col(1.0, 1.0, 1.0)));
 	else if (ev == SDLK_KP_3)
-		add_obj(b, init_cyl(init_vect(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 5), init_col(0.2, 0.2, 0.2), init_vect(1.0, 0.0, 0.0), 1));
+		add_obj(b, init_cyl(init_vect(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 5), init_col(1.0, 1.0, 1.0), init_vect(1.0, 1.0, 1.0), 1));
 	else if (ev == SDLK_KP_4)
-		add_obj(b, init_cone(init_vect(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 5), init_col(0.2, 0.2, 0.2), init_vect(0.0, 1.0, 0.0)));
+		add_obj(b, init_cone(init_vect(b->cam.pos.x, b->cam.pos.y, b->cam.pos.z + 5), init_col(1.0, 1.0, 1.0), init_vect(0.0, 1.0, 0.0), 1));
 }
 
 /*
@@ -62,13 +58,13 @@ void	ev_move_obj(t_b *b, int ev)
 	if (!(obj = search_obj(b, b->id)))
 		return (ev_move_lum(b, ev));
 	if (ev == SDLK_i)
-		obj->ori.y += 0.5;
-	else if (ev == SDLK_k)
-		obj->ori.y -= 0.5;
-	else if (ev == SDLK_l)
-		obj->ori.x -= 0.5;
-	else if (ev == SDLK_j)
 		obj->ori.x += 0.5;
+	else if (ev == SDLK_k)
+		obj->ori.x -= 0.5;
+	else if (ev == SDLK_l)
+		obj->ori.y += 0.5;
+	else if (ev == SDLK_j)
+		obj->ori.y -= 0.5;
 	else if (ev == SDLK_u)
 		obj->ori.z -= 2.0;
 	else if (ev == SDLK_o)
@@ -89,13 +85,13 @@ void	ev_move_lum(t_b *b, int ev)
 	if (!(lux = search_lux(b, b->id)))
 		return ;
 	if (ev == SDLK_i)
-		lux->ori.y += 0.1;
-	else if (ev == SDLK_k)
-		lux->ori.y -= 0.1;
-	else if (ev == SDLK_l)
-		lux->ori.x -= 0.1;
-	else if (ev == SDLK_j)
 		lux->ori.x += 0.1;
+	else if (ev == SDLK_k)
+		lux->ori.x -= 0.1;
+	else if (ev == SDLK_l)
+		lux->ori.y += 0.1;
+	else if (ev == SDLK_j)
+		lux->ori.y -= 0.1;
 	else if (ev == SDLK_u)
 		lux->ori.z -= 2.0;
 	else if (ev == SDLK_o)

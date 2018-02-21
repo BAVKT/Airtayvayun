@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/02 13:16:46 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/06 14:27:09 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/16 19:43:51 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ t_act		*add_action(t_b *b, t_act act)
 
 void	act_movaxis(t_act *act)
 {
+	double tmp;
 	// t_v 	min;
 	// t_v  	max;
 	// t_v		v;
@@ -80,6 +81,12 @@ void	act_movaxis(t_act *act)
 	// v = vect_sub(max, min);
 	// act->obj1->ori = vect_add(min, vect_multnb(&v, (cos(act->p) + 1.) / 2.));
 	// act->p += DEG2RAD(20);
+	if (act->min >= act->max)
+	{
+		tmp = act->min;
+		act->min = act->max;
+		act->max = tmp;
+	}
 	if (*act->axis >= act->max)
 		act->p = 0;
 	else if (*act->axis <= act->min)

@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/19 18:58:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/02 17:24:38 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/21 21:27:41 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	calc_spe(t_lux *lux, t_inter inter, t_v to_eye)
 	t_v		reflect;
 	double	dot;
 
-	reflect = vect_rotate(lux->light, 180, inter.n);
+	reflect = vect_add(vect_multnb(&lux->light, -1), vect_multnb(&inter.n, 2 * vect_dot(lux->light, inter.n)));
 	if ((dot = vect_dot(reflect, to_eye)) <= 0.0)
 	{
 		lux->lum_spe = init_col(0.0, 0.0, 0.0);
@@ -61,6 +61,7 @@ void	calc_spe(t_lux *lux, t_inter inter, t_v to_eye)
 
 t_lux		*add_lux(t_b *b, t_lux lux)
 {
+            ft_putendlcolor("add_lux();", MAGENTA);
 	t_lux	*l;
 
 	if (!b)

@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   RTv1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cquillet <cquillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 18:44:32 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/12 15:22:04 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/19 21:24:19 by cquillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __RTV1_H
 # define __RTV1_H
 # include "libft.h"
+# include "color.h"
 // # include "parse.h"
 # include <SDL.h>
 // # include <SDL_image.h>
@@ -153,12 +154,23 @@ typedef struct				s_cam
 }							t_cam;
 
 /*
+** Struct for triangles
+*/
+
+typedef struct			s_tri
+{
+	t_v					v[3];
+	t_v					vt[3];
+	t_v					vn[3];
+}						t_tri;
+
+/*
 ** Obj struct containing every kind of object
 */
 
 typedef	struct				s_obj
 {
-	int						form;	//1 = plan, 2 = sph, 3 = cyl, 4 = cone
+	int						form;	//1 = plan, 2 = sph, 3 = cyl, 4 = cone, 5 = tri
 	int						id;
 	double					a;
 	double					b;
@@ -166,6 +178,7 @@ typedef	struct				s_obj
 	double					d;
 	double					r;
 	double					angle;
+	t_tri					*tri;
 	t_v						h;
 	t_v						ori;
 	t_tex					tex;
@@ -257,20 +270,23 @@ void						draw_lux(t_b *b);
 */
 
 void						init_b(t_b *b);
+void						init_win(t_b *b);
 void						init_vp(t_b *b);
-void						init_cam(t_cam *cam);
+void						init_cam(t_b *b);
 t_v							init_vect(double x, double y, double z);
 t_vl						init_vl(t_v v, int id);
-t_lux						init_lux(t_v pos);
-t_obj						init_sph(t_v v, t_col color);
+t_lux						init_lux(t_v pos, t_col dif, t_col spe);
+t_obj						init_sph(t_v v, t_col color, double r);
 t_col						init_col(double r, double g, double b);
 t_obj						init_plane(double a, double b, double c, double d, t_col col);
 t_tex						init_tex();
 void						init_inter(t_inter *inter);
 t_matrice					init_matrice();
-t_obj						init_cone(t_v v, t_col col, t_v h);
+t_obj						init_cone(t_v v, t_col col, t_v h, double r);
 t_obj						init_cyl(t_v v, t_col col, t_v h, double r);
 t_act						init_act(t_obj *obj1, int action, int axis);
+t_ray						init_ray(t_v ori, t_v dir, double t);
+
 
 /*
 **	Errors								| error.c
@@ -284,7 +300,6 @@ void						error_quit(int e);
 */
 
 int							main();
-void						loop();
 void						ray(t_b *b);
 
 /*
@@ -295,6 +310,8 @@ t_v							draw_pixelvp(t_b *b, t_px px);
 t_v							ray2vect(t_ray ray);
 double						solve_equation(double min, double a, double b, double c);
 t_px						pos2px(t_b *b, t_v v);
+void						print_obj(t_obj *obj);
+
 
 /*
 ** Catch the events						| event.c
@@ -354,21 +371,23 @@ t_vl						*search_vl(t_b *b, int id);
 ** Utilitaries for color				| color.c
 */
 
+unsigned int				spectrum_color(int value, int min, int max);
 t_col						get_color(t_b *b, t_ray ray);
 t_col						color_add(t_col col, t_col col2);
 t_col						color_mult(t_col col, t_col col2);
 t_col						color_multnb(t_col col, double nb);
 void						color_sat(t_col *col);
 unsigned int				col2int(t_col col);
+t_col						int2col(unsigned int color);
 void						print_col(t_col col);
-void						color_max(t_col col, double *colmax);
+void						color_max(t_col *col, double *colmax);
 
 /*
 ** Intercept for objs 					| intersection.c
 */
 
 double						inter_obj(t_b *b, t_ray *ray);
-double						inter_obj_lux(t_b *b, t_ray *ray);
+int							inter_obj_lux(t_b *b, t_ray *ray);
 int							inter_all(t_b *b, t_ray *ray, double min);
 
 /*
@@ -446,9 +465,26 @@ void						act_color(t_obj *obj);
 void						to_fdf(t_b *b, char *name);
 
 
+/*
+** Parsing							| parsing.c
+*/
 
+void						help_parsing();
+void						parse_main(t_b *b, char *av);
+void						parse_zob(t_b *b, char *av);
+t_v							parse_vect(char *s);
+t_col						parse_col(char *s);
+double						parse_double(char *s);
+void						parse_err(int e, char *s);
 
+/*
+** help functions					| help.c
+*/
 
+void						man_help();
+void						help_parsing();
+void						help_obj();
+void						usage();
 
 
 

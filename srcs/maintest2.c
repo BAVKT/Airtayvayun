@@ -6,7 +6,7 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/16 20:00:54 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/12 17:06:07 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/20 09:51:11 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,16 @@ void	rt(t_b *b)
 		px.y = 0;
 		while (px.y < b->winy)
 		{
-			ray.ori = b->cam.pos;
-			ray.dir = vect_sub(draw_pixelvp(b, px), b->cam.pos);
+			ray = init_ray(b->cam.pos, vect_sub(draw_pixelvp(b, px), b->cam.pos), 1.0);
+			// b->inter.tex = init_tex();
+			// b->inter.n = b->cam.dir;
+			// col = get_color(b, ray);
 			b->inter.id  = -1;
-			if (vect_dot(ray.dir, b->cam.dir) > 0)
+			// if (vect_dot(ray.dir, b->cam.dir) > 0)
+				ray.t = b->max;	
 				inter_obj(b, &ray);
 			col = get_color(b, ray);
+			// col = color_add(col, get_color(b, ray));
 			i = -1;
 			while (++i < b->aliasing)
 			{
@@ -146,19 +150,58 @@ void		draw_lux(t_b *b)
 	}
 }
 
-int main()
+
+int main(int ac, char **av)
 {
 	t_b			b;
 
-	init_b(&b);
-	scene5(&b);
+
+	if (ac > 2)
+		return (0);
+	if (ac == 2 && !ft_strcmp(av[1], "help"))
+		man_help();
+	else if (ac == 2 && !ft_strcmp(av[1], "help parsing"))
+		help_parsing();
+	else if (ac == 2 && !ft_strcmp(av[1], "usage"))
+		usage();
+	else if (ac == 2 && !ft_strcmp(av[1], "help obj"))
+		help_obj();
+	else if (ac == 2)
+	{
+		parse_main(&b, av[1]);
+		init_b(&b);
+	}
+	else if (ac < 2)
+	{
+		init_b(&b);
+		init_win(&b);
+		scene5(&b);
+	}
+	init_win(&b);
+	print_obj(b.obj);
 	while (event(&b))
 		rt(&b);
 	SDL_DestroyWindow(b.win);
 	SDL_Quit();
-	return 0;
+	return (0);
 }
 
-void	loop()
-{
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

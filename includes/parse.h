@@ -6,13 +6,19 @@
 /*   By: vmercadi <vmercadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/06 15:08:55 by vmercadi          #+#    #+#             */
-/*   Updated: 2018/02/06 18:30:17 by vmercadi         ###   ########.fr       */
+/*   Updated: 2018/02/13 16:37:53 by vmercadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __PARSE_H
 # define __PARSE_H
 # include "RTv1.h"
+
+/*
+	Virer la structure sommet et face
+
+*/
+
 
 /*
 ** Sommet d'une face
